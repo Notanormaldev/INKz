@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: INKz-ingress
+  labels:
+    app.kubernetes.io/name: INKz-ingress
+spec:
+  rules:
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: sandbox-service
+            port: 
+              number: 80
