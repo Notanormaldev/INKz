@@ -17,6 +17,7 @@ spec:
       containers:
       - image:  sandbox:latest
         name:  main-sandbox-container
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             cpu: "500m"
