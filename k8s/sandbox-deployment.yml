@@ -14,8 +14,9 @@ spec:
       labels:
         app:  sandbox
     spec:
+      serviceAccountName: resource-manager
       containers:
-      - image:  localhost:5000/sandbox:latest
+      - image:  sandbox:latest
         name:  main-sandbox-container
         imagePullPolicy: Always
         resources:

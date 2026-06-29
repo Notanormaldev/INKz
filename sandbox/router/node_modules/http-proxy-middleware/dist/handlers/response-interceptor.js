@@ -1,0 +1,145 @@
+import * as zlib from 'node:zlib';
+import { Debug } from '../debug.js';
+import { getFunctionName } from '../utils/function.js';
+const debug = Debug.extend('response-interceptor');
+/**
+ * Intercept responses from upstream.
+ * Automatically decompress (deflate, gzip, brotli, zstd).
+ * Give developer the opportunity to modify intercepted Buffer and http.ServerResponse
+ *
+ * NOTE: must set options.selfHandleResponse=true (prevent automatic call of res.end())
+ *
+ * @example
+ *
+ * ```ts
+ * createProxyMiddleware({
+ *   target: 'http://example.com',
+ *   selfHandleResponse: true, // MUST set selfHandleResponse=true
+ *   on: {
+ *     proxyRes: responseInterceptor(async (buffer, proxyRes, req, res) => {
+ *       // modify intercepted buffer and return modified buffer
+ *       const modifiedBuffer = Buffer.from(buffer.toString().replace(/Example/g, 'Demo'), 'utf8');
+ *       return modifiedBuffer;
+ *     }),
+ *   }
+ * });
+ * ```
+ */
+export function responseInterceptor(interceptor) {
+    return async function proxyResResponseInterceptor(proxyRes, req, res) {
+        debug('intercept proxy response');
+        const originalProxyRes = proxyRes;
+        const chunks = [];
+        let bufferLength = 0;
+        // Bodyless responses (HEAD, 1xx, 204, 304) must not be decompressed.
+        const contentEncoding = isBodylessResponse(proxyRes.statusCode, req.method)
+            ? undefined
+            : proxyRes.headers['content-encoding'];
+        // decompress proxy response
+        const _proxyRes = decompress(proxyRes, contentEncoding);
+        // collect data chunks and concatenate once on end to avoid repeated full-buffer copies
+        _proxyRes.on('data', (chunk) => {
+            const chunkBuffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+            chunks.push(chunkBuffer);
+            bufferLength += chunkBuffer.length; // precalculate Buffer length for slightly better performance on Buffer.concat()
+        });
+        _proxyRes.on('end', async () => {
+            const buffer = Buffer.concat(chunks, bufferLength);
+            chunks.length = 0; // clear chunks array
+            bufferLength = 0;
+            // copy original headers
+            copyHeaders(proxyRes, res);
+            // RFC 9110: HEAD and 1xx/204/304 responses do not include content.
+            // End the response after headers to avoid writing an invalid body.
+            if (isBodylessResponse(proxyRes.statusCode, req.method)) {
+                res.end();
+                return;
+            }
+            // call interceptor with intercepted response (buffer)
+            debug('call interceptor function: %s', getFunctionName(interceptor));
+            const interceptedBuffer = Buffer.from(await interceptor(buffer, originalProxyRes, req, res));
+            // set correct content-length (with double byte character support)
+            debug('set content-length: %s', Buffer.byteLength(interceptedBuffer));
+            // Buffered responses cannot preserve trailer framing.
+            // Remove trailer declaration (and transfer-encoding just in case) before setting content-length.
+            res.removeHeader('trailer');
+            res.removeHeader('transfer-encoding');
+            res.setHeader('content-length', Buffer.byteLength(interceptedBuffer));
+            debug('write intercepted response');
+            res.write(interceptedBuffer);
+            res.end();
+        });
+        _proxyRes.on('error', (error) => {
+            chunks.length = 0; // clear chunks array
+            bufferLength = 0;
+            res.end(`Error fetching proxied request: ${error.message}`);
+        });
+    };
+}
+function isBodylessResponse(statusCode, method) {
+    return (method?.toUpperCase() === 'HEAD' ||
+        (statusCode !== undefined &&
+            ((statusCode >= 100 && statusCode < 200) || statusCode === 204 || statusCode === 304)));
+}
+/**
+ * Streaming decompression of proxy response
+ * source: https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L116
+ */
+function decompress(proxyRes, contentEncoding) {
+    let _proxyRes = proxyRes;
+    let decompress;
+    switch (contentEncoding) {
+        case 'gzip':
+            decompress = zlib.createGunzip();
+            break;
+        case 'br':
+            decompress = zlib.createBrotliDecompress();
+            break;
+        case 'deflate':
+            decompress = zlib.createInflate();
+            break;
+        case 'zstd':
+            decompress = zlib.createZstdDecompress();
+            break;
+        default:
+            break;
+    }
+    if (decompress) {
+        debug(`decompress proxy response with 'content-encoding': %s`, contentEncoding);
+        _proxyRes.pipe(decompress);
+        _proxyRes = decompress;
+    }
+    return _proxyRes;
+}
+/**
+ * Copy original headers
+ * https://github.com/apache/superset/blob/9773aba522e957ed9423045ca153219638a85d2f/superset-frontend/webpack.proxy-config.js#L78
+ */
+function copyHeaders(originalResponse, response) {
+    debug('copy original response headers');
+    if (originalResponse.statusCode) {
+        response.statusCode = originalResponse.statusCode;
+    }
+    if (originalResponse.statusMessage) {
+        response.statusMessage = originalResponse.statusMessage;
+    }
+    if (response.setHeader) {
+        let keys = Object.keys(originalResponse.headers);
+        // ignore encoding/framing headers that are incompatible with buffered interception
+        keys = keys.filter((key) => !['content-encoding', 'transfer-encoding', 'trailer'].includes(key));
+        keys.forEach((key) => {
+            let value = originalResponse.headers[key];
+            if (key === 'set-cookie' && value) {
+                // remove cookie domain
+                value = Array.isArray(value) ? value : [value];
+                value = value.map((x) => x.replace(/Domain=[^;]+?/i, ''));
+            }
+            response.setHeader(key, value);
+        });
+    }
+    else {
+        if ('headers' in response) {
+            response.headers = originalResponse.headers;
+        }
+    }
+}
