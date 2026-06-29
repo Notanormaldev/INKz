@@ -15,9 +15,9 @@ spec:
         app:  sandbox
     spec:
       containers:
-      - image:  sandbox:latest
+      - image:  localhost:5000/sandbox:latest
         name:  main-sandbox-container
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         resources:
           limits:
             cpu: "500m"

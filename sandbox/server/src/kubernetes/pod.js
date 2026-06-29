@@ -5,6 +5,8 @@ import { k8sCoreV1Api } from "./config.js";
 export async function createpod(sandboxid){
 
     const podManifest={
+        apiVersion:"v1",
+        kind:"Pod",
         metadata:{
             name:`sandbox-pod-${sandboxid}`,
             labels:{
@@ -15,7 +17,7 @@ export async function createpod(sandboxid){
         spec:{
             containers:[{
                 image:"template",
-                imagepullpolicy:"IfNotPresent",
+                imagePullPolicy:"IfNotPresent",
                 name:"sandbox-container",
                 ports:[{containerPort:5173,name:"http"}],
                 resources:{
