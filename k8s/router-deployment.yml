@@ -12,11 +12,12 @@ spec:
   template:
     metadata:
       labels:
-        name:  router
+        app:  router
+
     spec:
       containers:
       - image:  router:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         name:  router-server
         resources:
           requests:
