@@ -5,18 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"nodemon -L server.js",
-    "start":"nodemon server.js"
+    "dev": "nodemon -L server.js",
+    "start": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@kubernetes/client-node": "^1.4.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.7.3",
-    "morgan": "^1.11.0"
+    "morgan": "^1.11.0",
+    "uuid": "^14.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
