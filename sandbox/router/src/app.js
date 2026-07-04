@@ -37,7 +37,7 @@ function getproxy(sandboxid){
 
 const agentproxies={}
 function getagentproxy(sandboxid){
-       const target = `http://sandbox-service-${sandboxid}`;
+       const target = `http://sandbox-service-${sandboxid}:3000`;
 
         if(!agentproxies[sandboxid]){
         agentproxies[sandboxid] = createProxyMiddleware({
