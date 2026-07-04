@@ -22,7 +22,7 @@ const proxies={}
 
 function getproxy(sandboxid){
 
-    const target = `http://sandbox-service-${sandboxid}`;
+    const target = `http://sandbox-service-${sandboxid}:80`;
    
     if(!proxies[sandboxid]){
         proxies[sandboxid] = createProxyMiddleware({
@@ -47,7 +47,7 @@ function getagentproxy(sandboxid){
         });
     }
     
-    return proxies[sandboxid];
+    return agentproxies[sandboxid];
    
 }
 
@@ -58,7 +58,6 @@ app.use((req, res, next) => {
 
 
     if(host.split('.')[1]=="agent"){
-
         return getagentproxy(sandboxid)(req,res,next);
     }else{
 

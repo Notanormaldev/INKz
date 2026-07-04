@@ -16,10 +16,24 @@ export async function createpod(sandboxid){
             }
         },
         spec:{
-          volume:[{
-            name:"workspace_volume",
+          volumes:[{
+            name:"workspace-volume",
             emptyDir:{}
           }],
+         initContainers:[
+            {
+                name:"init-container",
+                image:"template:latest",
+                imagePullPolicy:"Always",
+                command:['sh','-c','cp -r /workspace/. /seed/'],
+                volumeMounts:[{
+                    name:"workspace-volume",
+                    mountPath:"/seed"
+                }]
+                
+
+            }
+         ],
             containers:[{
                 image:"template:latest",
                 imagePullPolicy:"Always",
@@ -36,7 +50,7 @@ export async function createpod(sandboxid){
                     }
                 },
                 volumeMounts:[{
-                    name:"workspace_volume",
+                    name:"workspace-volume",
                     mountPath:"/workspace"
                 }]
             },{
@@ -55,7 +69,7 @@ export async function createpod(sandboxid){
                     }
                 },
                  volumeMounts:[{
-                    name:"workspace_volume",
+                    name:"workspace-volume",
                     mountPath:"/workspace"
                 }]
 
