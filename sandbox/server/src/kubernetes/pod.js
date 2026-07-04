@@ -1,3 +1,4 @@
+import { V1Volume } from "@kubernetes/client-node";
 import { k8sCoreV1Api } from "./config.js";
 
 
@@ -15,6 +16,10 @@ export async function createpod(sandboxid){
             }
         },
         spec:{
+          volume:[{
+            name:"workspace_volume",
+            emptyDir:{}
+          }],
             containers:[{
                 image:"template:latest",
                 imagePullPolicy:"Always",
@@ -30,6 +35,29 @@ export async function createpod(sandboxid){
                         cpu:"500m"
                     }
                 },
+                volumeMounts:[{
+                    name:"workspace_volume",
+                    mountPath:"/workspace"
+                }]
+            },{
+                image:"agent:latest",
+                imagePullPolicy:"Always",
+                name:"agent-container",
+                ports:[{containerPort:3000,name:"http"}],
+                resources:{
+                    requests:{
+                        memory:"256Mi",
+                        cpu:"250m"
+                    },
+                    limits:{
+                        memory:"512Mi",
+                        cpu:"500m"
+                    }
+                },
+                 volumeMounts:[{
+                    name:"workspace_volume",
+                    mountPath:"/workspace"
+                }]
 
             }]
         }
