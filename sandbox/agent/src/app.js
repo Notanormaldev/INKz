@@ -94,7 +94,6 @@ app.get('/read-file',async (req,res)=>{
         let filepath = `${WORKING_DIR}/${file}`
         try {
             let fileContent=await fs.promises.readFile(filepath,'utf-8')
-            // fileContent=fileContent.split('\n')
             content[file]=fileContent
         } catch (error) {
             console.error(error)
