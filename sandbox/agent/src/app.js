@@ -94,7 +94,7 @@ app.get('/read-file',async (req,res)=>{
         let filepath = `${WORKING_DIR}/${file}`
         try {
             let fileContent=await fs.promises.readFile(filepath,'utf-8')
-            fileContent=fileContent.split('\n')
+            // fileContent=fileContent.split('\n')
             content[file]=fileContent
         } catch (error) {
             console.error(error)
@@ -165,34 +165,43 @@ app.patch('/update-files',async (req,res)=>{
 @description:create a new file in the working directory with the given filename and content and if it need in folder then create also in folder and also create folder also 
 @returns: {Object} :message of the file creation
 -eg. : 
-  body:{
-       "filename":"file1.txt",
-       "content":"new content"
-  }
+    "files": [
+        {"filename":"index.html",
+        "content":"hello"},
+         {"filename":"index1.html",
+        "content":"hello1"}
+   ]
 */
 
 
 
-app.post('/create-files',(req,res)=>{
-    const {files}=req.body  
-    files.map(async (file)=>{
-      let filepath = `${WORKING_DIR}/${file.filename}`
-      try {
-        await fs.promises.mkdir(path.dirname(filepath), { recursive: true })
-        await fs.promises.writeFile(filepath,file.content)
-      } catch (error) {
+app.post('/create-files', async (req, res) => {
+    const { files } = req.body
+    if (!files || !Array.isArray(files)) {
+        return res.status(400).json({
+            message: "files array is required",
+            status: "error"
+        })
+    }
+
+    try {
+        await Promise.all(files.map(async (file) => {
+            let filepath = `${WORKING_DIR}/${file.filename}`
+            await fs.promises.mkdir(path.dirname(filepath), { recursive: true })
+            await fs.promises.writeFile(filepath, file.content)
+        }))
+
+        res.status(200).json({
+            message: "files created successfully",
+            status: "success"
+        })
+    } catch (error) {
         console.error(error)
         res.status(500).json({
-            message:`error creating ${file.filename}`,
-            status:"error"
+            message: "error creating files",
+            status: "error"
         })
-      }
-    })
-
-    res.status(200).json({
-        message:"files created successfully",
-        status:"success"
-    })
+    }
 })
 
 export default app    
