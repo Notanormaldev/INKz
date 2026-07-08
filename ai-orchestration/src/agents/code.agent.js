@@ -18,17 +18,20 @@ const agent = createAgent({
 
 
 
-const response = await agent.invoke(
-    {
-        messages: [
-            {
-                role: "user",
-                content: "Get started Edit src/App.jsx and save to test HMR  just remove this text from App.jsx  "
-            }
-        ]
-    },
-    {
-        recursionLimit: 100
-    }
-)
-console.log("Agent Response:", JSON.stringify(response, null, 2));
+// const response = await agent.invoke(
+//     {
+//         messages: [
+//             {
+//                 role: "user",
+//                 content: "Get started Edit src/App.jsx and save to test HMR  just remove this text from App.jsx  "
+//             }
+//         ]
+//     },
+//     {
+//         recursionLimit: 100
+//     }
+// )
+// console.log("Agent Response:", JSON.stringify(response, null, 2));
+
+
+export default codingagent  

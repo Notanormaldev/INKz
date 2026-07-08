@@ -1,7 +1,7 @@
 import express from "express"
 import morgan from "morgan"
 
-
+import agentrouter from "./routes/agents.route.js"
 
 app.use(express.json())
 app.use(morgan("dev"))
@@ -15,5 +15,7 @@ app.get("/api/ai/health",(req,res)=>{
         status:"ok"
     })
 })
+app.use("/api/ai/agents",agentrouter)
+
 
 export default app;

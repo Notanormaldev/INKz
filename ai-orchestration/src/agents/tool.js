@@ -11,7 +11,7 @@ export const listfiles=tool(
         console.log("list file tool called"); 
         console.log("===============");
         
-        const res = await axios.get("http://019f3c69-e791-74cd-81ba-bad1937274dc.agent.localhost/list-files")
+        const res = await axios.get("http://019f4129-8a4e-7288-9a75-248ffc3b637b.agent.localhost/list-files")
        console.log("===============");
         console.log(res.data.elements); 
         console.log("===============");
@@ -35,7 +35,7 @@ export const readfile=tool(
         console.log("===============");
         const files = input.files;
         try {
-            const res = await axios.get("http://019f3c69-e791-74cd-81ba-bad1937274dc.agent.localhost/read-file?files="+files.join(","))
+            const res = await axios.get("http://019f4129-8a4e-7288-9a75-248ffc3b637b.agent.localhost/read-file?files="+files.join(","))
             console.log("===============");
             console.log(res.data.content); 
             console.log("===============");
@@ -61,7 +61,7 @@ export const updatefile=tool(
         console.log("===============");
         const updates = input.updates;
         try {
-            const res = await axios.patch("http://019f3c69-e791-74cd-81ba-bad1937274dc.agent.localhost/update-files",{
+            const res = await axios.patch("http://019f4129-8a4e-7288-9a75-248ffc3b637b.agent.localhost/update-files",{
                 updates:updates
             })
             console.log("===============");
@@ -93,7 +93,7 @@ export const createFile=tool(
         console.log("===============");
         const files = input.files;
         try {
-            const res = await axios.post("http://019f3c69-e791-74cd-81ba-bad1937274dc.agent.localhost/create-files",{
+            const res = await axios.post("http://019f4129-8a4e-7288-9a75-248ffc3b637b.agent.localhost/create-files",{
                   files:files
             })
             console.log("===============");
