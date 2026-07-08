@@ -15,7 +15,7 @@ app.get("/api/ai/health",(req,res)=>{
         status:"ok"
     })
 })
-app.use("/api/ai/agents",agentrouter)
+app.use("/api/ai",agentrouter)
 
 
 export default app;

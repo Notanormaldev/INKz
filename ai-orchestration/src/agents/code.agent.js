@@ -34,4 +34,4 @@ const agent = createAgent({
 // console.log("Agent Response:", JSON.stringify(response, null, 2));
 
 
-export default codingagent  
+export default agent  
