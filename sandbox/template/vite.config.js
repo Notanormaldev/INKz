@@ -8,5 +8,10 @@ export default defineConfig({
     host: true,
     port: 5173,
     allowedHosts: true
+  },
+  watch:{
+    usePolling: true,
+    interval:300,
+    ignored:["node_modules"] 
   }
 })

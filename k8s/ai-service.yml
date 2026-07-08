@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  ai-service
+spec:
+  selector:
+    app: ai-deployment
+  type: ClusterIP
+  ports:
+  - name:  ai-orch-s-port
+    port:  3000
+    targetPort:  3000

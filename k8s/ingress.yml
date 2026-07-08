@@ -10,10 +10,22 @@ spec:
     - http:
         paths:
           - pathType: Prefix
-            path: "/"
+            path: "/api/sandbox"
             backend:
               service:
                 name: sandbox-service
+                port:
+                  number: 80
+
+
+
+    - http:
+        paths:
+          - pathType: Prefix
+            path: "/api/ai"
+            backend:
+              service:
+                name: ai-service
                 port:
                   number: 80
                   
