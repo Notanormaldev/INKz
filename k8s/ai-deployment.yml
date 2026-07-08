@@ -28,7 +28,12 @@ spec:
           limits:
             cpu: "512m"
             memory: "256Mi"
-            
+        env:
+          - name:  MISTRAL_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name:  ai-secret
+                key:  MISTRAL_API_KEY
         livenessProbe:
           httpGet:
             path: /api/ai/health
