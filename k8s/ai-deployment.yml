@@ -1,11 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  ai-deployment
+  name: ai-deployment
   labels:
-    name:  ai-deployment
+    name: ai-deployment
 spec:
-
   replicas: 2
   selector:
     matchLabels:
@@ -17,37 +16,36 @@ spec:
         app: ai-deployment
     spec:
       containers:
-      - image:  ai-orchestration
-        imagePullPolicy: Always
-        name:  ai-orchestration
-        resources:
-          requests:
-            cpu: "256m"
-            memory: "128Mi"
+        - image: ai-orchestration
+          imagePullPolicy: Always
+          name: ai-orchestration
+          resources:
+            requests:
+              cpu: "256m"
+              memory: "128Mi"
 
-          limits:
-            cpu: "512m"
-            memory: "256Mi"
-        env:
-          - name:  MISTRAL_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name:  ai-secret
-                key:  MISTRAL_API_KEY
-        livenessProbe:
-          httpGet:
-            path: /api/ai/health
-            port: 3000
-          initialDelaySeconds: 90
-          timeoutSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /api/ai/health
-            port: 3000
-          initialDelaySeconds: 30
-          timeoutSeconds: 10
-       
-        ports:
-        - containerPort:  3000
-          name:  ai-orch-port
+            limits:
+              cpu: "512m"
+              memory: "256Mi"
+          env:
+            - name: MISTRAL_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-secret
+                  key: MISTRAL_API_KEY
+          livenessProbe:
+            httpGet:
+              path: /api/ai/health
+              port: 3000
+            initialDelaySeconds: 90
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/ai/health
+              port: 3000
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
 
+          ports:
+            - containerPort: 3000
+              name: ai-orch-port
