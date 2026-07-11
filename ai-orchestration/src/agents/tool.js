@@ -6,12 +6,12 @@ import z from "zod"
 
 
 export const listfiles=tool(
-    async ({})=>{
+    async ({},config)=>{
         console.log("===============");
         console.log("list file tool called"); 
         console.log("===============");
         
-        const res = await axios.get("http://sandbox-service-019f4129-8a4e-7288-9a75-248ffc3b637b:3000/list-files")
+        const res = await axios.get(`http://sandbox-service-${config.context.projectid}:3000/list-files`)
        console.log("===============");
         console.log(res.data.elements); 
         console.log("===============");
@@ -29,13 +29,13 @@ export const listfiles=tool(
 
 
 export const readfile=tool(
-    async (input)=>{
+    async (input,config)=>{
         console.log("===============");
         console.log("read file tool called with input:", input); 
         console.log("===============");
         const files = input.files;
         try {
-            const res = await axios.get("http://sandbox-service-019f4129-8a4e-7288-9a75-248ffc3b637b:3000/read-file?files="+files.join(","))
+            const res = await axios.get(`http://sandbox-service-${config.context.projectid}:3000/read-file?files=`+files.join(","))
             console.log("===============");
             console.log(res.data.content); 
             console.log("===============");
@@ -55,13 +55,13 @@ export const readfile=tool(
 )
 
 export const updatefile=tool(
-    async (input)=>{
+    async (input,config)=>{
         console.log("===============");
         console.log("update file tool called with input:", input); 
         console.log("===============");
         const updates = input.updates;
         try {
-            const res = await axios.patch("http://sandbox-service-019f4129-8a4e-7288-9a75-248ffc3b637b:3000/update-files",{
+            const res = await axios.patch(`http://sandbox-service-${config.context.projectid}:3000/update-files`,{
                 updates:updates
             })
             console.log("===============");
@@ -87,13 +87,13 @@ export const updatefile=tool(
 
 
 export const createFile=tool(
-    async (input)=>{
+    async (input,config)=>{
         console.log("===============");
         console.log("create file tool called with input:", input); 
         console.log("===============");
         const files = input.files;
         try {
-            const res = await axios.post("http://sandbox-service-019f4129-8a4e-7288-9a75-248ffc3b637b:3000/create-files",{
+            const res = await axios.post(`http://sandbox-service-${config.context.projectid}:3000/create-files`,{
                   files:files
             })
             console.log("===============");

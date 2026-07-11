@@ -6,11 +6,13 @@ const agentrouter = Router()
 
 agentrouter.post('/invoke',async (req,res)=>{
     try {
-        const {message}=req.body
+        const {message,projectid}=req.body
         const response = await codingagent.invoke({messages:[{
             role:"user",
             content:message
-        }]});
+        }]},{
+            context:{projectid}
+        });
         res.json({response})
     } catch (error) {
         console.error("error invoking the agent",error)
