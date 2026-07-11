@@ -16,39 +16,39 @@ app.get('/api/status/readyz', (req, res) => {
         message: "router is ready"
     })
 })
-const proxies={}
+const proxies = {}
 
 
 
-function getproxy(sandboxid){
+function getproxy(sandboxid) {
 
     const target = `http://sandbox-service-${sandboxid}:80`;
-   
-    if(!proxies[sandboxid]){
+
+    if (!proxies[sandboxid]) {
         proxies[sandboxid] = createProxyMiddleware({
             target,
             changeOrigin: true,
             ws: true,
         });
     }
-    
+
     return proxies[sandboxid];
 }
 
-const agentproxies={}
-function getagentproxy(sandboxid){
-       const target = `http://sandbox-service-${sandboxid}:3000`;
+const agentproxies = {}
+function getagentproxy(sandboxid) {
+    const target = `http://sandbox-service-${sandboxid}:3000`;
 
-        if(!agentproxies[sandboxid]){
+    if (!agentproxies[sandboxid]) {
         agentproxies[sandboxid] = createProxyMiddleware({
             target,
             changeOrigin: true,
             ws: true,
         });
     }
-    
+
     return agentproxies[sandboxid];
-   
+
 }
 
 app.use((req, res, next) => {
@@ -57,14 +57,32 @@ app.use((req, res, next) => {
     const sandboxid = host.split('.')[0]
 
 
-    if(host.split('.')[1]=="agent"){
-        return getagentproxy(sandboxid)(req,res,next);
-    }else{
+    if (host.split('.')[1] == "agent") {
+        return getagentproxy(sandboxid)(req, res, next);
+    } else {
 
-        return getproxy(sandboxid)(req,res,next);
+        return getproxy(sandboxid)(req, res, next);
     }
 
 })
+
+export function setupWebSocketProxy(server) {
+    server.on('upgrade', (req, socket, head) => {
+        const host = req.headers.host;
+        if (!host) {
+            socket.destroy();
+            return;
+        }
+        const parts = host.split('.');
+        const sandboxid = parts[0];
+        
+        if (parts[1] === "agent") {
+            getagentproxy(sandboxid).upgrade(req, socket, head);
+        } else {
+            getproxy(sandboxid).upgrade(req, socket, head);
+        }
+    });
+}
 
 export default app;
 
