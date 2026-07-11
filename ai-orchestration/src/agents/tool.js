@@ -8,12 +8,13 @@ import z from "zod"
 export const listfiles=tool(
     async ({},config)=>{
 
-      const writer=config.writer
+      const writer = config?.configurable?.writer || console.log;
+      const projectid = config?.configurable?.projectid;
 
-      writer("working in directory(watching files) :\n",config.context.projectid)
+      writer("working in directory(watching files) :\n",projectid)
 
     
-        const res = await axios.get(`http://sandbox-service-${config.context.projectid}:3000/list-files`)
+        const res = await axios.get(`http://sandbox-service-${projectid}:3000/list-files`)
       
         writer("files listed sucessfully",res.data.elements)
 
@@ -33,13 +34,14 @@ export const readfile=tool(
     async (input,config)=>{
 
 
-        const writer=config.writer
+        const writer = config?.configurable?.writer || console.log;
+        const projectid = config?.configurable?.projectid;
 
         writer("files you asked to read are \n",JSON.stringify(input.files,null,2))
 
         const files = input.files;
         try {
-            const res = await axios.get(`http://sandbox-service-${config.context.projectid}:3000/read-file?files=`+files.join(","))
+            const res = await axios.get(`http://sandbox-service-${projectid}:3000/read-file?files=`+files.join(","))
             writer("files read sucessfully\n",JSON.stringify(res.data,null,2))
             return JSON.stringify(res.data)
         } catch (error) {
@@ -58,11 +60,12 @@ export const readfile=tool(
 
 export const updatefile=tool(
     async (input,config)=>{
-        const writer=config.writer
+        const writer = config?.configurable?.writer || console.log;
+        const projectid = config?.configurable?.projectid;
         writer("files you asked to update are \n",JSON.stringify(input.updates,null,2))
         const updates = input.updates;
         try {
-            const res = await axios.patch(`http://sandbox-service-${config.context.projectid}:3000/update-files`,{
+            const res = await axios.patch(`http://sandbox-service-${projectid}:3000/update-files`,{
                 updates:updates
             })
             writer("files updated sucessfully\n",JSON.stringify(res.data,null,2))
@@ -87,11 +90,12 @@ export const updatefile=tool(
 
 export const createFile=tool(
     async (input,config)=>{
-        const writer=config.writer
+        const writer = config?.configurable?.writer || console.log;
+        const projectid = config?.configurable?.projectid;
         writer("files you asked to create are \n",JSON.stringify(input.files,null,2))
         const files = input.files;
         try {
-            const res = await axios.post(`http://sandbox-service-${config.context.projectid}:3000/create-files`,{
+            const res = await axios.post(`http://sandbox-service-${projectid}:3000/create-files`,{
                   files:files
             })
             writer("files created sucessfully\n",JSON.stringify(res.data,null,2))

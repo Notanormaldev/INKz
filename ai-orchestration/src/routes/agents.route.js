@@ -11,11 +11,11 @@ agentrouter.post('/invoke',async (req,res)=>{
             role:"user",
             content:message
         }]},{
-            context:{projectid},
+            configurable:{projectid},
             streamMode:"custom"
         });
 
-        for (const chunk of response){
+        for await (const chunk of response){
            console.log(chunk);    
         }
         res.json({response})
