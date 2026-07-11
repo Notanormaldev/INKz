@@ -7,14 +7,15 @@ import z from "zod"
 
 export const listfiles=tool(
     async ({},config)=>{
-        console.log("===============");
-        console.log("list file tool called"); 
-        console.log("===============");
-        
+
+      const writer=config.writer
+
+      writer("working in directory(watching files) :\n",config.context.projectid)
+
+    
         const res = await axios.get(`http://sandbox-service-${config.context.projectid}:3000/list-files`)
-       console.log("===============");
-        console.log(res.data.elements); 
-        console.log("===============");
+      
+        writer("files listed sucessfully",res.data.elements)
 
         return JSON.stringify(res.data.elements)
     },
@@ -30,15 +31,16 @@ export const listfiles=tool(
 
 export const readfile=tool(
     async (input,config)=>{
-        console.log("===============");
-        console.log("read file tool called with input:", input); 
-        console.log("===============");
+
+
+        const writer=config.writer
+
+        writer("files you asked to read are \n",JSON.stringify(input.files,null,2))
+
         const files = input.files;
         try {
             const res = await axios.get(`http://sandbox-service-${config.context.projectid}:3000/read-file?files=`+files.join(","))
-            console.log("===============");
-            console.log(res.data.content); 
-            console.log("===============");
+            writer("files read sucessfully\n",JSON.stringify(res.data,null,2))
             return JSON.stringify(res.data)
         } catch (error) {
             console.error("Error in readfile tool:", error.response ? error.response.data : error.message);
@@ -56,17 +58,14 @@ export const readfile=tool(
 
 export const updatefile=tool(
     async (input,config)=>{
-        console.log("===============");
-        console.log("update file tool called with input:", input); 
-        console.log("===============");
+        const writer=config.writer
+        writer("files you asked to update are \n",JSON.stringify(input.updates,null,2))
         const updates = input.updates;
         try {
             const res = await axios.patch(`http://sandbox-service-${config.context.projectid}:3000/update-files`,{
                 updates:updates
             })
-            console.log("===============");
-            console.log(res.data); 
-            console.log("===============");
+            writer("files updated sucessfully\n",JSON.stringify(res.data,null,2))
             return JSON.stringify(res.data)
         } catch (error) {
             console.error("Error in updatefile tool:", error.response ? error.response.data : error.message);
@@ -88,17 +87,14 @@ export const updatefile=tool(
 
 export const createFile=tool(
     async (input,config)=>{
-        console.log("===============");
-        console.log("create file tool called with input:", input); 
-        console.log("===============");
+        const writer=config.writer
+        writer("files you asked to create are \n",JSON.stringify(input.files,null,2))
         const files = input.files;
         try {
             const res = await axios.post(`http://sandbox-service-${config.context.projectid}:3000/create-files`,{
                   files:files
             })
-            console.log("===============");
-            console.log(res.data); 
-            console.log("===============");
+            writer("files created sucessfully\n",JSON.stringify(res.data,null,2))
             return JSON.stringify(res.data)
         } catch (error) {
             console.error("Error in createFile tool:", error.response ? error.response.data : error.message);

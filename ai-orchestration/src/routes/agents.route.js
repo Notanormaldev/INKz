@@ -7,12 +7,17 @@ const agentrouter = Router()
 agentrouter.post('/invoke',async (req,res)=>{
     try {
         const {message,projectid}=req.body
-        const response = await codingagent.invoke({messages:[{
+        const response = await codingagent.stream({messages:[{
             role:"user",
             content:message
         }]},{
-            context:{projectid}
+            context:{projectid},
+            streamMode:"custom"
         });
+
+        for (const chunk of response){
+           console.log(chunk);    
+        }
         res.json({response})
     } catch (error) {
         console.error("error invoking the agent",error)
