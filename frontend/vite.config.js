@@ -7,15 +7,16 @@ export default defineConfig({
   server: {
     port: 3001,
     proxy: {
-      // 1. Proxy agent API requests (e.g., /api/agent/{sandboxId}/list-files)
-      '/api/agent': {
+      // 1. Proxy agent API requests (e.g., /agent-api/{sandboxId}/list-files)
+      '/agent-api': {
         target: 'http://127.0.0.1',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/agent\/[^/]+/, ''),
+        rewrite: (path) => path.replace(/^\/agent-api\/[^/]+/, ''),
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            const match = req.url.match(/^\/api\/agent\/([^/]+)/);
-            if (match) {
+            const originalUrl = req.originalUrl || req.url;
+            const match = originalUrl.match(/^\/agent-api\/([^/]+)/);
+            if (match && match[1]) {
               proxyReq.setHeader('Host', `${match[1]}.agent.localhost`);
             }
           });
