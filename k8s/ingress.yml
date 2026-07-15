@@ -8,6 +8,14 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "6000"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "6000"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "6000"
+   
+
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "route"
+    nginx.ingress.kubernetes.io/session-cookie-path: "/"
+
+
+
 
 spec:
   ingressClassName: nginx
