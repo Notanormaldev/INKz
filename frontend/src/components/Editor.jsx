@@ -56,7 +56,7 @@ export default function Editor({ openFiles, activeFile, onSelect, onClose, onSav
   function handleKeyDown(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault()
-      if (activeFile) onSave(activeFile, openFiles[activeFile])
+      if (activeFile) onSave(activeFile)
     }
   }
 

@@ -23,6 +23,8 @@ export default function Workspace() {
   const [activePanel, setActivePanel] = useState('editor')
   const [terminalOpen, setTerminalOpen] = useState(true)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  // Track in-editor (unsaved) changes separately from persisted content
+  const [localEdits, setLocalEdits] = useState({})
 
   const {
     files, openFiles, activeFile, loading: filesLoading,
@@ -38,15 +40,24 @@ export default function Workspace() {
     if (sandboxId) fetchFiles()
   }, [sandboxId, fetchFiles])
 
-  // Handle file save and refresh chat awareness
-  const handleSave = useCallback(async (filePath, content) => {
-    await saveFile(filePath, content)
-  }, [saveFile])
+  // Display content = persisted + any unsaved local edits overlaid
+  const displayFiles = { ...openFiles, ...localEdits }
 
   const handleChange = useCallback((filePath, content) => {
-    // Local update only — saveFile on Ctrl+S
-    import('../hooks/useFiles').then(() => {}) // no-op, state in hook
+    setLocalEdits(prev => ({ ...prev, [filePath]: content }))
   }, [])
+
+  const handleSave = useCallback(async (filePath) => {
+    const content = localEdits[filePath] ?? openFiles[filePath]
+    if (content === undefined) return
+    await saveFile(filePath, content)
+    setLocalEdits(prev => { const n = { ...prev }; delete n[filePath]; return n })
+  }, [localEdits, openFiles, saveFile])
+
+  const handleClose = useCallback((filePath) => {
+    setLocalEdits(prev => { const n = { ...prev }; delete n[filePath]; return n })
+    closeFile(filePath)
+  }, [closeFile])
 
   return (
     <div className="workspace">
@@ -76,13 +87,8 @@ export default function Workspace() {
                 <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
               </svg>
             </button>
-            <button className="activity-btn" title="Git">
-              <svg viewBox="0 0 24 24" fill="none">
-                <circle cx="6" cy="6" r="2" stroke="currentColor" strokeWidth="1.5"/>
-                <circle cx="6" cy="18" r="2" stroke="currentColor" strokeWidth="1.5"/>
-                <circle cx="18" cy="8" r="2" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="M6 8v8M6 8c2 0 3.5 1 4.5 2.5L15 14a3 3 0 0 0 3-2v-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
+            <button className="activity-btn" title="Terminal" onClick={() => setTerminalOpen(t => !t)}>
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 17l6-6-6-6M12 19h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>
 
@@ -91,7 +97,7 @@ export default function Workspace() {
             <FileTree
               files={files}
               activeFile={activeFile}
-              openFiles={openFiles}
+              openFiles={displayFiles}
               onOpenFile={openFile}
               onRefresh={fetchFiles}
               loading={filesLoading}
@@ -104,15 +110,12 @@ export default function Workspace() {
           {(activePanel === 'editor' || activePanel === 'split') && (
             <div className={`editor-area ${terminalOpen ? 'with-terminal' : ''}`}>
               <Editor
-                openFiles={openFiles}
+                openFiles={displayFiles}
                 activeFile={activeFile}
                 onSelect={setActiveFile}
-                onClose={closeFile}
+                onClose={handleClose}
                 onSave={handleSave}
-                onChange={(path, content) => {
-                  // Mirror local state
-                  saveFile(path, content)
-                }}
+                onChange={handleChange}
               />
 
               {/* Terminal toggle */}
