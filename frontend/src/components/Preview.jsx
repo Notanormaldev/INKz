@@ -1,8 +1,6 @@
 import './Preview.css'
 
 export default function Preview({ previewUrl, sandboxId }) {
-  if (!previewUrl) return null
-
   const url = previewUrl || `http://${sandboxId}.preview.localhost`
 
   return (

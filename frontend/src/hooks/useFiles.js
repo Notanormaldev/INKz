@@ -9,7 +9,7 @@ export function useFiles(sandboxId) {
   const [activeFile, setActiveFile] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const agentBase = `http://${sandboxId}.agent.localhost`
+  const agentBase = `/api/agent/${sandboxId}`
 
   const fetchFiles = useCallback(async () => {
     try {

@@ -60,9 +60,11 @@ export default function Terminal({ sandboxId }) {
     termRef.current = term
     fitRef.current = fitAddon
 
-    // Connect socket.io to agent
-    const agentUrl = `http://${sandboxId}.agent.localhost`
-    const socket = io(agentUrl, { transports: ['websocket'] })
+    // Connect socket.io to agent via proxied connection
+    const socket = io({
+      query: { sandboxId },
+      transports: ['websocket']
+    })
     socketRef.current = socket
 
     socket.on('connect', () => {

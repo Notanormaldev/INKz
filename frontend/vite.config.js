@@ -7,10 +7,41 @@ export default defineConfig({
   server: {
     port: 3001,
     proxy: {
-      // Proxy /api/* to the nginx ingress controller on localhost (using IPv4 loopback)
+      // 1. Proxy agent API requests (e.g., /api/agent/{sandboxId}/list-files)
+      '/api/agent': {
+        target: 'http://127.0.0.1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/agent\/[^/]+/, ''),
+        configure: (proxy, _options) => {
+          proxy.on('proxyReq', (proxyReq, req, _res) => {
+            const match = req.url.match(/^\/api\/agent\/([^/]+)/);
+            if (match) {
+              proxyReq.setHeader('Host', `${match[1]}.agent.localhost`);
+            }
+          });
+        }
+      },
+      // 2. Proxy standard /api/sandbox requests
       '/api': {
         target: 'http://127.0.0.1',
         changeOrigin: true,
+      },
+      // 3. Proxy Socket.IO websocket terminal requests
+      '/socket.io': {
+        target: 'http://127.0.0.1',
+        changeOrigin: true,
+        ws: true,
+        configure: (proxy, _options) => {
+          const setHostHeader = (proxyReq, req) => {
+            const url = new URL(req.url, 'http://localhost');
+            const sandboxId = url.searchParams.get('sandboxId');
+            if (sandboxId) {
+              proxyReq.setHeader('Host', `${sandboxId}.agent.localhost`);
+            }
+          };
+          proxy.on('proxyReq', setHostHeader);
+          proxy.on('proxyReqWs', setHostHeader);
+        }
       }
     }
   }
