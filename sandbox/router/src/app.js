@@ -68,8 +68,6 @@ app.use((req, res, next) => {
 
 import httpProxy from 'http-proxy';
 
-const wsProxy = httpProxy.createProxyServer({});
-
 export function setupWebSocketProxy(server) {
     server.on('upgrade', (req, socket, head) => {
         const host = req.headers.host;
@@ -84,15 +82,27 @@ export function setupWebSocketProxy(server) {
         
         let target;
         if (parts[1] === "agent") {
-            target = `ws://sandbox-service-${sandboxid}:3000`;
+            target = `http://sandbox-service-${sandboxid}:3000`;
         } else {
-            target = `ws://sandbox-service-${sandboxid}:80`;
+            target = `http://sandbox-service-${sandboxid}:80`;
         }
 
         console.log(`[Router] Proxying websocket upgrade to target: ${target}`);
-        wsProxy.ws(req, socket, head, { target }, (err) => {
+        
+        const proxy = httpProxy.createProxyServer({
+            target,
+            changeOrigin: true,
+            ws: true
+        });
+
+        proxy.ws(req, socket, head, {}, (err) => {
             console.error('[Router] WS Proxy error:', err);
             socket.destroy();
+            proxy.close();
+        });
+
+        socket.on('close', () => {
+            proxy.close();
         });
     });
 }

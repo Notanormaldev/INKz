@@ -24,20 +24,42 @@ function buildTree(files) {
 
 function getFileIcon(name) {
   const lowerName = name.toLowerCase()
-  if (lowerName === 'dockerfile' || lowerName === '.dockerignore' || lowerName.includes('docker')) return '🐳'
-  if (lowerName === '.gitignore' || lowerName === '.gitattributes') return '🌳'
-  if (lowerName === 'package.json' || lowerName === 'package-lock.json') return '📦'
-  if (lowerName.includes('vite.config')) return '⚡'
-  if (lowerName === '.env' || lowerName.includes('.env.')) return '🔑'
+  
+  if (lowerName === 'dockerfile' || lowerName === '.dockerignore' || lowerName.includes('docker')) {
+    return { char: '🐳', color: '#0db7ed' }
+  }
+  if (lowerName === '.gitignore' || lowerName === '.gitattributes') {
+    return { char: '🌳', color: '#f1502f' }
+  }
+  if (lowerName === 'package.json' || lowerName === 'package-lock.json') {
+    return { char: '📦', color: '#cb3837' }
+  }
+  if (lowerName.includes('vite.config')) {
+    return { char: '⚡', color: '#bd34fe' }
+  }
+  if (lowerName === '.env' || lowerName.includes('.env.')) {
+    return { char: '🔑', color: '#e9b143' }
+  }
 
   const ext = name.split('.').pop()?.toLowerCase()
   const icons = {
-    jsx: '⚛', tsx: '⚛', js: '◈', ts: '◈',
-    css: '◉', scss: '◉', html: '◻', json: '{}',
-    md: '✦', svg: '◆', png: '◆', jpg: '◆',
-    env: '⬡', yml: '⬡', yaml: '⬡',
+    jsx: { char: '⚛', color: '#61dafb' },
+    tsx: { char: '⚛', color: '#61dafb' },
+    js: { char: '◈', color: '#f7df1e' },
+    ts: { char: '◈', color: '#3178c6' },
+    css: { char: '◉', color: '#1572b6' },
+    scss: { char: '◉', color: '#c6538c' },
+    html: { char: '◻', color: '#e34f26' },
+    json: { char: '⚙', color: '#cbcb41' },
+    md: { char: '✦', color: '#519aba' },
+    svg: { char: '◆', color: '#ffb13b' },
+    png: { char: '◆', color: '#a074c4' },
+    jpg: { char: '◆', color: '#a074c4' },
+    jpeg: { char: '◆', color: '#a074c4' },
+    yml: { char: '⬡', color: '#cb171e' },
+    yaml: { char: '⬡', color: '#cb171e' },
   }
-  return icons[ext] ?? '📄'
+  return icons[ext] ?? { char: '📄', color: '#8f9aae' }
 }
 
 function TreeNode({ name, node, depth, onOpenFile, activeFile, openFiles }) {
@@ -57,7 +79,7 @@ function TreeNode({ name, node, depth, onOpenFile, activeFile, openFiles }) {
           onClick={() => setExpanded(e => !e)}
         >
           <span className={`tree-chevron ${expanded ? 'expanded' : ''}`}>›</span>
-          <span className="tree-folder-icon">{expanded ? '📂' : '📁'}</span>
+          <span className="tree-folder-icon" style={{ color: '#e9b143' }}>{expanded ? '📂' : '📁'}</span>
           <span className="tree-name">{name}</span>
         </button>
         {expanded && (
@@ -79,6 +101,8 @@ function TreeNode({ name, node, depth, onOpenFile, activeFile, openFiles }) {
     )
   }
 
+  const fileIcon = getFileIcon(name)
+
   return (
     <button
       className={`tree-item tree-file-item ${isActive ? 'active' : ''} ${isOpen ? 'open' : ''}`}
@@ -86,7 +110,7 @@ function TreeNode({ name, node, depth, onOpenFile, activeFile, openFiles }) {
       onClick={() => onOpenFile(node)}
       title={node}
     >
-      <span className="tree-file-icon">{getFileIcon(name)}</span>
+      <span className="tree-file-icon" style={{ color: fileIcon.color }}>{fileIcon.char}</span>
       <span className="tree-name truncate">{name}</span>
       {isOpen && <span className="tree-dot" />}
     </button>

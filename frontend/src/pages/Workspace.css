@@ -13,17 +13,15 @@
   min-height: 0;
 }
 
-/* ── Sidebar ── */
 .sidebar {
   display: flex;
   flex-shrink: 0;
   overflow: hidden;
-  transition: width 0.2s ease;
-  width: 260px;
 }
 
 .sidebar.collapsed {
-  width: 42px;
+  width: 42px !important;
+  transition: width 0.15s ease;
 }
 
 /* Activity bar */
@@ -129,7 +127,6 @@
 
 /* Terminal area */
 .terminal-area {
-  height: 240px;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -142,19 +139,71 @@
 }
 
 .preview-area.split {
-  max-width: 45%;
   border-left: 1px solid var(--border);
 }
 
 /* ── Chat area ── */
 .chat-area {
-  width: 320px;
   flex-shrink: 0;
   overflow: hidden;
+  border-left: 1px solid var(--border);
 }
 
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .chat-area { width: 260px; }
-  .sidebar:not(.collapsed) { width: 200px; }
+/* ── Resizers ── */
+.resizer-col {
+  width: 2px;
+  background: var(--border);
+  cursor: col-resize;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: background 0.15s;
+}
+
+.resizer-col::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  right: -4px;
+  cursor: col-resize;
+}
+
+.resizer-col:hover,
+.resizer-col.active {
+  background: var(--accent);
+}
+
+.resizer-row {
+  height: 2px;
+  background: var(--border);
+  cursor: row-resize;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: background 0.15s;
+}
+
+.resizer-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  bottom: -4px;
+  cursor: row-resize;
+}
+
+.resizer-row:hover,
+.resizer-row.active {
+  background: var(--accent);
+}
+
+/* Ensure iframe doesn't intercept mouse move events during dragging */
+.dragging-active iframe {
+  pointer-events: none;
+}
+.dragging-active .editor-area {
+  pointer-events: none;
 }

@@ -35,10 +35,66 @@ export default function Workspace() {
     messages, streaming, sendMessage, stopStreaming
   } = useChat(sandboxId)
 
+  const [sidebarWidth, setSidebarWidth] = useState(260)
+  const [terminalHeight, setTerminalHeight] = useState(240)
+  const [splitWidth, setSplitWidth] = useState(50) // percentage
+  const [chatWidth, setChatWidth] = useState(320)
+
+  // Dragging states
+  const [isDraggingSidebar, setIsDraggingSidebar] = useState(false)
+  const [isDraggingTerminal, setIsDraggingTerminal] = useState(false)
+  const [isDraggingSplit, setIsDraggingSplit] = useState(false)
+  const [isDraggingChat, setIsDraggingChat] = useState(false)
+
   // Load files on mount
   useEffect(() => {
     if (sandboxId) fetchFiles()
   }, [sandboxId, fetchFiles])
+
+  // Mouse move and up handlers for resizing
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isDraggingSidebar) {
+        const newWidth = Math.max(150, Math.min(600, e.clientX))
+        setSidebarWidth(newWidth)
+      } else if (isDraggingTerminal) {
+        const editorAreaEl = document.querySelector('.editor-area')
+        if (editorAreaEl) {
+          const rect = editorAreaEl.getBoundingClientRect()
+          const newHeight = Math.max(80, Math.min(rect.height - 100, rect.bottom - e.clientY))
+          setTerminalHeight(newHeight)
+        }
+      } else if (isDraggingSplit) {
+        const centerAreaEl = document.querySelector('.center-area')
+        if (centerAreaEl) {
+          const rect = centerAreaEl.getBoundingClientRect()
+          const relativeX = e.clientX - rect.left
+          const percentage = Math.max(15, Math.min(85, (relativeX / rect.width) * 100))
+          setSplitWidth(percentage)
+        }
+      } else if (isDraggingChat) {
+        const newWidth = Math.max(200, Math.min(600, window.innerWidth - e.clientX))
+        setChatWidth(newWidth)
+      }
+    }
+
+    const handleMouseUp = () => {
+      setIsDraggingSidebar(false)
+      setIsDraggingTerminal(false)
+      setIsDraggingSplit(false)
+      setIsDraggingChat(false)
+    }
+
+    if (isDraggingSidebar || isDraggingTerminal || isDraggingSplit || isDraggingChat) {
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseup', handleMouseUp)
+    }
+  }, [isDraggingSidebar, isDraggingTerminal, isDraggingSplit, isDraggingChat])
 
   // Display content = persisted + any unsaved local edits overlaid
   const displayFiles = { ...openFiles, ...localEdits }
@@ -59,8 +115,10 @@ export default function Workspace() {
     closeFile(filePath)
   }, [closeFile])
 
+  const draggingActive = isDraggingSidebar || isDraggingTerminal || isDraggingSplit || isDraggingChat
+
   return (
-    <div className="workspace">
+    <div className={`workspace ${draggingActive ? 'dragging-active' : ''}`}>
       <TopBar
         sandboxId={sandboxId}
         activePanel={activePanel}
@@ -69,7 +127,10 @@ export default function Workspace() {
 
       <div className="workspace-body">
         {/* ── Sidebar ── */}
-        <div className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
+        <div
+          className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}
+          style={{ width: sidebarCollapsed ? undefined : sidebarWidth }}
+        >
           {/* Activity bar */}
           <div className="activity-bar">
             <button
@@ -105,10 +166,21 @@ export default function Workspace() {
           )}
         </div>
 
+        {/* Sidebar resizer handle */}
+        {!sidebarCollapsed && (
+          <div
+            className={`resizer-col ${isDraggingSidebar ? 'active' : ''}`}
+            onMouseDown={() => setIsDraggingSidebar(true)}
+          />
+        )}
+
         {/* ── Center ── */}
         <div className="center-area">
           {(activePanel === 'editor' || activePanel === 'split') && (
-            <div className={`editor-area ${terminalOpen ? 'with-terminal' : ''}`}>
+            <div
+              className={`editor-area ${terminalOpen ? 'with-terminal' : ''}`}
+              style={{ flex: activePanel === 'split' ? splitWidth : 1 }}
+            >
               <Editor
                 openFiles={displayFiles}
                 activeFile={activeFile}
@@ -130,22 +202,44 @@ export default function Workspace() {
               </button>
 
               {terminalOpen && (
-                <div className="terminal-area">
-                  <Terminal sandboxId={sandboxId} />
-                </div>
+                <>
+                  <div
+                    className={`resizer-row ${isDraggingTerminal ? 'active' : ''}`}
+                    onMouseDown={() => setIsDraggingTerminal(true)}
+                  />
+                  <div className="terminal-area" style={{ height: terminalHeight }}>
+                    <Terminal sandboxId={sandboxId} />
+                  </div>
+                </>
               )}
             </div>
           )}
 
+          {activePanel === 'split' && (
+            <div
+              className={`resizer-col ${isDraggingSplit ? 'active' : ''}`}
+              onMouseDown={() => setIsDraggingSplit(true)}
+            />
+          )}
+
           {(activePanel === 'preview' || activePanel === 'split') && (
-            <div className={`preview-area ${activePanel === 'split' ? 'split' : ''}`}>
+            <div
+              className={`preview-area ${activePanel === 'split' ? 'split' : ''}`}
+              style={{ flex: activePanel === 'split' ? (100 - splitWidth) : 1 }}
+            >
               <Preview previewUrl={previewUrl} sandboxId={sandboxId} />
             </div>
           )}
         </div>
 
+        {/* Chat resizer handle */}
+        <div
+          className={`resizer-col ${isDraggingChat ? 'active' : ''}`}
+          onMouseDown={() => setIsDraggingChat(true)}
+        />
+
         {/* ── Chat ── */}
-        <div className="chat-area">
+        <div className="chat-area" style={{ width: chatWidth }}>
           <ChatPanel
             messages={messages}
             streaming={streaming}
@@ -158,3 +252,4 @@ export default function Workspace() {
     </div>
   )
 }
+
