@@ -1,0 +1,66 @@
+.terminal-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #0a0b0d;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.dot.red    { background: #ff5f57; }
+.dot.yellow { background: #febc2e; }
+.dot.green  { background: #28c840; }
+
+.terminal-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  flex: 1;
+}
+
+.terminal-sandbox-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.terminal-container {
+  flex: 1;
+  padding: 6px 8px;
+  overflow: hidden;
+}
+
+/* Override xterm defaults */
+.terminal-container .xterm {
+  height: 100%;
+}
+
+.terminal-container .xterm-viewport {
+  background: transparent !important;
+}
+
+.terminal-container .xterm-screen {
+  background: #0a0b0d;
+}
