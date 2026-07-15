@@ -1,0 +1,138 @@
+.editor-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+
+/* ── Tab bar ── */
+.tab-bar {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  flex-shrink: 0;
+  height: 36px;
+}
+
+.tab-bar::-webkit-scrollbar { height: 2px; }
+
+.tab {
+  display: flex;
+  align-items: center;
+  border-right: 1px solid var(--border);
+  position: relative;
+  min-width: 80px;
+  max-width: 180px;
+  flex-shrink: 0;
+}
+
+.tab::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: transparent;
+  transition: background 0.15s;
+}
+
+.tab.active::before {
+  background: var(--accent);
+}
+
+.tab.active {
+  background: var(--bg-base);
+}
+
+.tab-label {
+  flex: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  padding: 0 8px 0 12px;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  height: 100%;
+  transition: color 0.15s;
+}
+
+.tab-label:hover { color: var(--text-primary); }
+.tab.active .tab-label { color: var(--text-primary); }
+
+.tab-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 8px 0 4px;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s;
+}
+
+.tab:hover .tab-close,
+.tab.active .tab-close { opacity: 1; }
+.tab-close:hover { color: var(--red); }
+
+/* ── Editor body ── */
+.editor-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Force Monaco background */
+.editor-body .monaco-editor,
+.editor-body .monaco-editor .margin,
+.editor-body .overflow-guard {
+  background: var(--bg-base) !important;
+}
+
+/* ── Empty state ── */
+.editor-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.editor-empty-logo {
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-sans);
+  font-size: 36px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: #1e2128;
+}
+
+.editor-empty-z {
+  font-style: italic;
+  font-size: 40px;
+}
+
+.editor-empty p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.editor-empty-hint {
+  font-size: 11px !important;
+  font-family: var(--font-mono);
+  color: var(--text-muted) !important;
+  opacity: 0.6;
+}

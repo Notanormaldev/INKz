@@ -1,0 +1,125 @@
+.loading-screen {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+
+.loading-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, black, transparent);
+  pointer-events: none;
+}
+
+.loading-center {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* Logo */
+.loading-logo {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-sans);
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -4px;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.loading-z {
+  font-style: italic;
+  font-size: 62px;
+}
+
+.loading-ink-drop {
+  position: absolute;
+  top: -6px;
+  left: 2px;
+  width: 8px;
+  height: 11px;
+  background: var(--accent);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: drop-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes drop-pulse {
+  0%, 100% { transform: scaleY(1); opacity: 0.8; }
+  50% { transform: scaleY(1.2); opacity: 1; }
+}
+
+/* Ink loader bar */
+.ink-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 220px;
+}
+
+.ink-track {
+  width: 100%;
+  height: 2px;
+  background: var(--border-light);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ink-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  animation: ink-spread 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes ink-spread {
+  0% { width: 0%; margin-left: 0%; }
+  50% { width: 60%; margin-left: 20%; }
+  100% { width: 0%; margin-left: 100%; }
+}
+
+.ink-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.ink-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: dot-bounce 1.2s ease-in-out infinite;
+}
+
+.ink-dots span:nth-child(2) { animation-delay: 0.15s; }
+.ink-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes dot-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-6px); opacity: 1; background: var(--accent); }
+}
+
+/* Status message */
+.loading-msg {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  min-height: 18px;
+  transition: opacity 0.3s;
+}

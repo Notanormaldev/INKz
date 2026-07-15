@@ -1,0 +1,82 @@
+/* ─── Design Tokens ─────────────────────────────────────── */
+:root {
+  --bg-base:       #0d0e11;
+  --bg-sidebar:    #111318;
+  --bg-panel:      #131519;
+  --bg-hover:      #1a1d24;
+  --bg-active:     #1e2229;
+  --bg-input:      #161820;
+
+  --accent:        #d4631a;
+  --accent-dim:    rgba(212, 99, 26, 0.12);
+  --accent-border: rgba(212, 99, 26, 0.35);
+
+  --text-primary:  #e8eaf0;
+  --text-secondary:#9aa0b0;
+  --text-muted:    #4a5060;
+  --text-accent:   #d4631a;
+
+  --border:        #1e2128;
+  --border-light:  #252932;
+
+  --green:         #3fb950;
+  --red:           #f85149;
+  --yellow:        #d29922;
+  --blue:          #58a6ff;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.7);
+}
+
+/* ─── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbars ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2d38; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #363a48; }
+
+/* ─── Selection ─────────────────────────────────────────── */
+::selection {
+  background: rgba(212, 99, 26, 0.25);
+  color: var(--text-primary);
+}
+
+/* ─── Utilities ─────────────────────────────────────────── */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
