@@ -16,6 +16,17 @@ app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
 
+// Add CORS headers middleware for agent API calls from frontend
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
 
 const WORKING_DIR='/workspace'
 
