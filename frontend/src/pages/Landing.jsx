@@ -19,10 +19,27 @@ export default function Landing() {
       setTimeout(() => setLoadingMsg('Mounting workspace volume…'), 2000)
       setTimeout(() => setLoadingMsg('Starting dev server…'), 3500)
 
-      const res = await fetch(SANDBOX_API, { method: 'POST' })
+      const res = await fetch(SANDBOX_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      // Guard against HTML error pages from proxy/nginx before calling .json()
+      const contentType = res.headers.get('content-type') ?? ''
+      if (!contentType.includes('application/json')) {
+        const text = await res.text()
+        throw new Error(
+          `Server returned ${res.status} with non-JSON response.\n` +
+          `Make sure the sandbox API is running and accessible.\n` +
+          `Response preview: ${text.slice(0, 120)}`
+        )
+      }
+
       const data = await res.json()
 
-      if (!res.ok) throw new Error(data.message || 'Failed to create sandbox')
+      if (!res.ok) {
+        throw new Error(data.message || `API error ${res.status}`)
+      }
 
       setLoadingMsg('Sandbox ready. Launching IDE…')
       await new Promise(r => setTimeout(r, 600))
@@ -30,9 +47,9 @@ export default function Landing() {
         state: { previewUrl: data.preview }
       })
     } catch (err) {
-      console.error(err)
-      setLoadingMsg(`Error: ${err.message}`)
-      setTimeout(() => setLoading(false), 2000)
+      console.error('[INKz] handleNewProject error:', err)
+      setLoadingMsg(`⚠ ${err.message.split('\n')[0]}`)
+      setTimeout(() => setLoading(false), 3000)
     }
   }
 

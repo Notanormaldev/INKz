@@ -7,8 +7,10 @@ export default defineConfig({
   server: {
     port: 3001,
     proxy: {
+      // Proxy /api/* to the nginx ingress controller's external IP
+      // (ingress-nginx LoadBalancer EXTERNAL-IP from: kubectl get svc -n ingress-nginx)
       '/api': {
-        target: 'http://localhost',
+        target: 'http://172.18.0.2',
         changeOrigin: true,
       }
     }

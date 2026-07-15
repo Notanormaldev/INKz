@@ -13,7 +13,6 @@ export const createservice=async (sandboxid)=>{
     },
     spec:{
         selector:{
-            app:"sandbox",
             sandboxid:sandboxid
         },
         ports:[
