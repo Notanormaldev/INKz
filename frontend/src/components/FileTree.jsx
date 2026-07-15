@@ -23,6 +23,13 @@ function buildTree(files) {
 }
 
 function getFileIcon(name) {
+  const lowerName = name.toLowerCase()
+  if (lowerName === 'dockerfile' || lowerName === '.dockerignore' || lowerName.includes('docker')) return '🐳'
+  if (lowerName === '.gitignore' || lowerName === '.gitattributes') return '🌳'
+  if (lowerName === 'package.json' || lowerName === 'package-lock.json') return '📦'
+  if (lowerName.includes('vite.config')) return '⚡'
+  if (lowerName === '.env' || lowerName.includes('.env.')) return '🔑'
+
   const ext = name.split('.').pop()?.toLowerCase()
   const icons = {
     jsx: '⚛', tsx: '⚛', js: '◈', ts: '◈',
@@ -30,7 +37,7 @@ function getFileIcon(name) {
     md: '✦', svg: '◆', png: '◆', jpg: '◆',
     env: '⬡', yml: '⬡', yaml: '⬡',
   }
-  return icons[ext] ?? '◇'
+  return icons[ext] ?? '📄'
 }
 
 function TreeNode({ name, node, depth, onOpenFile, activeFile, openFiles }) {

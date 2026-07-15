@@ -66,21 +66,34 @@ app.use((req, res, next) => {
 
 })
 
+import httpProxy from 'http-proxy';
+
+const wsProxy = httpProxy.createProxyServer({});
+
 export function setupWebSocketProxy(server) {
     server.on('upgrade', (req, socket, head) => {
         const host = req.headers.host;
+        console.log(`[Router] Received upgrade request for host: ${host}, url: ${req.url}`);
         if (!host) {
+            console.log('[Router] Rejecting upgrade: No host header');
             socket.destroy();
             return;
         }
         const parts = host.split('.');
         const sandboxid = parts[0];
         
+        let target;
         if (parts[1] === "agent") {
-            getagentproxy(sandboxid).upgrade(req, socket, head);
+            target = `ws://sandbox-service-${sandboxid}:3000`;
         } else {
-            getproxy(sandboxid).upgrade(req, socket, head);
+            target = `ws://sandbox-service-${sandboxid}:80`;
         }
+
+        console.log(`[Router] Proxying websocket upgrade to target: ${target}`);
+        wsProxy.ws(req, socket, head, { target }, (err) => {
+            console.error('[Router] WS Proxy error:', err);
+            socket.destroy();
+        });
     });
 }
 
