@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import morgan from 'morgan'
-import jwt from 'jsonwebtoken'
+
 import passport from 'passport'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import cookies from 'cookie-parser'
@@ -24,6 +24,10 @@ passport.use(new GoogleStrategy({
     return  done(null,profile)
 
 }))
+
+app.get('/auth/status/healthz',(req,res){
+    res.status(200).json({msg:"Auth ok"})
+})
 
 export default app 
 
