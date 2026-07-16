@@ -14,6 +14,15 @@ build:
         infer:
           - "src/**"
 
+
+    - image: auth
+      context: auth
+      docker:
+        dockerfile: dockerfile
+      sync:
+        infer:
+          - "src/**"
+
     - image: agent
       context: sandbox/agent
       docker:

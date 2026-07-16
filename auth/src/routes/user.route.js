@@ -1,13 +1,14 @@
 import { Router } from "express";
 import User from "../models/user.model.js";
 import passport from "passport";
+import jwt from "jsonwebtoken";
 
 
 const router = Router()
 
-router.get('/google',passport.authenticate('google',{scope:['profile','email']}))
+router.get('/google',passport.authenticate('google',{scope:['profile','email'],session:false}))
 
-router.get('/google/callback',passport.authenticate('google',{failureRedirect:"/"}),async (req,res) => {
+router.get('/google/callback',passport.authenticate('google',{failureRedirect:"/",session:false}),async (req,res) => {
     try {
 
         const {id,displayName,emails,photos}=req.user;

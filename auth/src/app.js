@@ -5,7 +5,7 @@ import morgan from 'morgan'
 import passport from 'passport'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import cookies from 'cookie-parser'
-
+import authrouter from './routes/user.route.js'
 
 
 
@@ -25,10 +25,12 @@ passport.use(new GoogleStrategy({
 
 }))
 
-app.get('/auth/status/healthz',(req,res){
+app.get('/auth/status/healthz',(req,res)=>{
     res.status(200).json({msg:"Auth ok"})
 })
 
+
+app.use('/api/auth',authrouter)
 export default app 
 
 
