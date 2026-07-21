@@ -46,3 +46,4 @@ build:
 manifests:
   rawYaml:
     - k8s/*.yml
+    - k8s/secret.yml

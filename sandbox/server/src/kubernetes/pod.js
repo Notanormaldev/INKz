@@ -85,3 +85,14 @@ export async function createpod(sandboxid){
 
     return res
 }
+export async function deletepod(sandboxid){
+   const res = await k8sCoreV1Api.deleteNamespacedPod({
+        namespace:"default",
+        name:`sandbox-pod-${sandboxid}`
+    },{
+        gracePeriodSeconds:0
+    })
+    return res ;
+}
+
+

@@ -2,7 +2,7 @@ import express from 'express'
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import morgan from 'morgan';
 const app = express();
-
+import { refreshTTL } from './config/redis.js';
 app.use(morgan("combined"))
 
 
@@ -67,9 +67,10 @@ app.use((req, res, next) => {
 })
 
 import httpProxy from 'http-proxy';
+import { refreshTTL } from './config/redis';
 
-export function setupWebSocketProxy(server) {
-    server.on('upgrade', (req, socket, head) => {
+export async function setupWebSocketProxy(server) {
+    server.on('upgrade',async (req, socket, head) => {
         const host = req.headers.host;
         console.log(`[Router] Received upgrade request for host: ${host}, url: ${req.url}`);
         if (!host) {
@@ -79,7 +80,7 @@ export function setupWebSocketProxy(server) {
         }
         const parts = host.split('.');
         const sandboxid = parts[0];
-        
+        await refreshTTL(sandboxid)
         let target;
         if (parts[1] === "agent") {
             target = `http://sandbox-service-${sandboxid}:3000`;
