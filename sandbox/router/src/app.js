@@ -67,7 +67,6 @@ app.use((req, res, next) => {
 })
 
 import httpProxy from 'http-proxy';
-import { refreshTTL } from './config/redis';
 
 export async function setupWebSocketProxy(server) {
     server.on('upgrade',async (req, socket, head) => {

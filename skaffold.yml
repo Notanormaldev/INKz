@@ -42,8 +42,10 @@ build:
       context: sandbox/router
       docker:
         dockerfile: dockerfile
+      sync:
+        infer:
+          - "src/**"
 
 manifests:
   rawYaml:
     - k8s/*.yml
-    - k8s/secret.yml

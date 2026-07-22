@@ -43,7 +43,7 @@ spec:
         env: 
         - name:  AUTH_MONGO_URI  
           valueFrom:    
-            configMapKeyRef:    
+            secretKeyRef:    
               name:  database    
               key:  AUTH_MONGO_URI
         - name:  JWT  
