@@ -1,6 +1,7 @@
 import express from 'express'
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import morgan from 'morgan';
+import httpProxy from 'http-proxy';
 const app = express();
 import { refreshTTL } from './config/redis.js';
 app.use(morgan("combined"))
@@ -28,7 +29,6 @@ function getproxy(sandboxid) {
         proxies[sandboxid] = createProxyMiddleware({
             target,
             changeOrigin: true,
-            ws: true,
         });
     }
 
@@ -43,7 +43,6 @@ function getagentproxy(sandboxid) {
         agentproxies[sandboxid] = createProxyMiddleware({
             target,
             changeOrigin: true,
-            ws: true,
         });
     }
 
@@ -66,10 +65,20 @@ app.use((req, res, next) => {
 
 })
 
-import httpProxy from 'http-proxy';
+const wsProxy = httpProxy.createProxyServer({
+    changeOrigin: true,
+    ws: true
+});
+
+wsProxy.on('error', (err, req, socket) => {
+    console.error('[Router] WS Proxy error:', err.message);
+    if (socket && socket.destroy) {
+        socket.destroy();
+    }
+});
 
 export async function setupWebSocketProxy(server) {
-    server.on('upgrade',async (req, socket, head) => {
+    server.on('upgrade', async (req, socket, head) => {
         const host = req.headers.host;
         console.log(`[Router] Received upgrade request for host: ${host}, url: ${req.url}`);
         if (!host) {
@@ -79,7 +88,7 @@ export async function setupWebSocketProxy(server) {
         }
         const parts = host.split('.');
         const sandboxid = parts[0];
-        await refreshTTL(sandboxid)
+        await refreshTTL(sandboxid);
         let target;
         if (parts[1] === "agent") {
             target = `http://sandbox-service-${sandboxid}:3000`;
@@ -88,22 +97,7 @@ export async function setupWebSocketProxy(server) {
         }
 
         console.log(`[Router] Proxying websocket upgrade to target: ${target}`);
-        
-        const proxy = httpProxy.createProxyServer({
-            target,
-            changeOrigin: true,
-            ws: true
-        });
-
-        proxy.ws(req, socket, head, {}, (err) => {
-            console.error('[Router] WS Proxy error:', err);
-            socket.destroy();
-            proxy.close();
-        });
-
-        socket.on('close', () => {
-            proxy.close();
-        });
+        wsProxy.ws(req, socket, head, { target });
     });
 }
 

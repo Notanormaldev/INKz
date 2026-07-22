@@ -65,19 +65,31 @@ ptyProcess.onExit(({exitcode, signal})=>{
     
     
 })
-io.on('connection',(socket)=>{
-    console.log('a user connected',socket.id);
-    socket.on("terminal-input",(data)=>{
-        ptyProcess.write(data)
-    })
-    socket.emit('connected',{
-        message:"connected",
-        status:"success"
-    })
-    socket.on("disconnect",()=>{
-        console.log("user disconnected",socket.id);
-    })
-})
+io.on('connection', (socket) => {
+    console.log('a user connected', socket.id);
+    
+    // Trigger prompt output for newly connected user
+    ptyProcess.write('\r');
+
+    socket.on("terminal-input", (data) => {
+        ptyProcess.write(data);
+    });
+
+    socket.on("terminal-resize", ({ cols, rows }) => {
+        try {
+            if (cols && rows) ptyProcess.resize(cols, rows);
+        } catch (e) {}
+    });
+
+    socket.emit('connected', {
+        message: "connected",
+        status: "success"
+    });
+
+    socket.on("disconnect", (reason) => {
+        console.log("user disconnected", socket.id, "reason:", reason);
+    });
+});
 
 
 
