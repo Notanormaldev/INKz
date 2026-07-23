@@ -27,7 +27,7 @@ channel.consume('auth_notification_queue',async (msg)=>{
                 textContent:text,
                 htmlContent:html
             })
-          check.ack(msg)
+          channel.ack(msg)
             
         } catch (error) {
             console.error("Error processing",error)
