@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name:  notification-service
+spec:
+  selector:
+    app:  notification
+  type:  ClusterIP
+  ports:
+  - name:  noti-port
+    port:  80
+    targetPort:  4000
+
+
+
+
+
+    

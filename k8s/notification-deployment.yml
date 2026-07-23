@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  notification
+  labels:
+    name:  notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app:  notification
+  template:
+    metadata:
+      labels:
+        app:  notification
+    spec:
+      containers:
+      - image:  notification
+        imagePullPolicy: Always
+        name:  notification
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "64Mi"
+          limits:
+            cpu: "200m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /api/notification/health
+            port: 4000
+          initialDelaySeconds: 90
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/notification/health
+            port: 4000
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+        env:
+        - name:  BREVO_API_KEY
+          valueFrom:  
+            secretKeyRef:
+              name:  email
+              key:  BREVO_API_KEY
+        - name:  AMQP_URL
+          valueFrom:  
+            secretKeyRef:
+              name:  database
+              key:  AMQP_URL      
+        - name:  EMAIL_USER
+          valueFrom:  
+            secretKeyRef:
+              name:  email
+              key:  EMAIL_USER
+        ports:
+        - containerPort:  4000
+          name:  noti-port
