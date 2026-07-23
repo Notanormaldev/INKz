@@ -1,72 +1,68 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name:  auth
+  name: auth
   labels:
-    app:  auth
+    app: auth
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app:  auth
+      app: auth
   template:
     metadata:
       labels:
-        app:  auth
+        app: auth
     spec:
       containers:
-      - image:  auth:latest
-        imagePullPolicy: Always
-        name:  auth
-        resources:
-          requests:
-            cpu: "256m"
-            memory: "128Mi"
-          limits:
-            cpu: "512m"
-            memory: "256Mi"
-        livenessProbe:
-          httpGet:
-            path: /auth/status/healthz
-            port: 3000
-          initialDelaySeconds: 90
-          timeoutSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /auth/status/healthz
-            port: 3000
-          initialDelaySeconds: 30
-          timeoutSeconds: 10
-        ports:
-        - containerPort:  3000
-          name:  auth-d-port
-        env: 
-        - name:  AUTH_MONGO_URI  
-          valueFrom:    
-            secretKeyRef:    
-              name:  database    
-              key:  AUTH_MONGO_URI
-        - name: AMQP_URL  
-          valueFrom:    
-            secretKeyRef:    
-              name:  database    
-              key:  AMQP_URL
-        - name:  JWT  
-          valueFrom:    
-            secretKeyRef:    
-              name:  jwt    
-              key:  JWT
-        - name:  GOOGLE_CLIENT_ID  
-          valueFrom:    
-            secretKeyRef:    
-              name:  google    
-              key:  GOOGLE_CLIENT_ID
-        - name:  GOOGLE_CLIENT_SECRET  
-          valueFrom:    
-            secretKeyRef:    
-              name:  google    
-              key:  GOOGLE_CLIENT_SECRET
-
-        
-
-
+        - image: auth:latest
+          imagePullPolicy: Always
+          name: auth
+          resources:
+            requests:
+              cpu: "256m"
+              memory: "128Mi"
+            limits:
+              cpu: "512m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /auth/status/healthz
+              port: 3000
+            initialDelaySeconds: 90
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /auth/status/healthz
+              port: 3000
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+          ports:
+            - containerPort: 3000
+              name: auth-d-port
+          env:
+            - name: AUTH_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: database
+                  key: AUTH_MONGO_URI
+            - name: AMQP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database
+                  key: AMQP_URL
+            - name: JWT
+              valueFrom:
+                secretKeyRef:
+                  name: jwt
+                  key: JWT
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: GOOGLE_CLIENT_SECRET
