@@ -46,6 +46,15 @@ build:
         infer:
           - "src/**"
 
+
+    - image: notification
+      context: notification
+      docker:
+        dockerfile: dockerfile
+      sync:
+        infer:
+          - "src/**"
+
 manifests:
   rawYaml:
     - k8s/*.yml
