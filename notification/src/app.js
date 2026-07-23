@@ -16,9 +16,13 @@ channel.consume('auth_notification_queue',async (msg)=>{
         console.log("Received message :",content);
 
         try {
-            const {to,subject,text,html} = content
+            const {userId,email,timestamp} = content
+
+            const subject = "New login detected"
+            const text = `A New login detected at this time ${timestamp}`
+            const html = `<p>A New login detected at this time ${timestamp}</p><p>If you didn't login at this time please change your password</p><p>Thanks Team INKz</p>`
             await sendEmail({
-                to,
+                to:email,
                 subject,
                 textContent:text,
                 htmlContent:html
