@@ -35,11 +35,11 @@ router.get('/google/callback', passport.authenticate('google', { scope: ['profil
 
         const token = jwt.sign({id:user._id},process.env.JWT,{expiresIn:"1w"})
         res.cookie("token",token,{httpOnly:true})
-        res.redirect("/")
+        res.redirect("http://localhost:5173")
         
     } catch (error) {
         console.log(error);
-        res.redirect("/login")
+        res.redirect("http://localhost:5173/login")
     }
 })
 

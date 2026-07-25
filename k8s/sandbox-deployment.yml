@@ -48,4 +48,19 @@ spec:
                 name: database
                 key: REDIS_URL
 
+          - name: SANDBOX_MONGO_URI 
+            valueFrom:
+              secretKeyRef:
+                name: database
+                key: SANDBOX_MONGO_URI
+
+          - name: JWT
+            valueFrom:
+              secretKeyRef:
+                name: jwt
+                key: JWT
+
+        
+             
+
       
