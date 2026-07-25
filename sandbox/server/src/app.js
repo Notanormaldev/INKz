@@ -4,12 +4,13 @@ import { createpod } from './kubernetes/pod.js'
 import { createservice } from './kubernetes/service.js'
 import {v7 as uuid}from 'uuid'
 import { createsandboxkey } from './config/redis.js'
-
+import cookieParser from 'cookie-parser'
 const app = express()
 
 app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
 
 app.get('/api/sandbox/health', (req, res) => {
     return res.status(200).json({
