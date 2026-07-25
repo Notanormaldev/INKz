@@ -5,10 +5,6 @@ const projectschema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         required:true
     },
-    projectid:{
-        type:String,
-        required:true,
-    },
     title:{
         type:String,
         default:"Untitled Project"
