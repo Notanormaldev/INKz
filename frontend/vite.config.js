@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3001,
+    port: 5173,
     proxy: {
       // 1. Proxy agent API requests (e.g., /agent-api/{sandboxId}/list-files)
       '/agent-api': {
@@ -24,7 +24,7 @@ export default defineConfig({
       },
       // 2. Proxy standard /api/sandbox requests
       '/api': {
-        target: 'http://127.0.0.1',
+        target: 'http://localhost:80',
         changeOrigin: true,
       },
       // 3. Proxy Socket.IO websocket terminal requests

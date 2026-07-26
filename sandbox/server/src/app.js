@@ -1,7 +1,8 @@
 import express, { urlencoded } from 'express'
 import morgan from "morgan"
-
 import cookieParser from 'cookie-parser'
+import sandboxrouter from './routes/sandbox.route.js'
+
 const app = express()
 
 app.use(express.json())
@@ -16,4 +17,6 @@ app.get('/api/sandbox/health', (req, res) => {
     })
 })
 
+
+app.use('/api/sandbox',sandboxrouter)
 export default app
