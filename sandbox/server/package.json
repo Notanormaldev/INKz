@@ -13,6 +13,7 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1096.0",
     "@kubernetes/client-node": "^1.4.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.4.2",
