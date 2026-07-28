@@ -55,6 +55,15 @@ build:
         infer:
           - "src/**"
 
+    - image: sync-agent
+      context: sandbox/sync-agent
+      docker:
+        dockerfile: dockerfile
+      sync:
+        infer:
+          - "**"
+
+
 manifests:
   rawYaml:
     - k8s/*.yml
