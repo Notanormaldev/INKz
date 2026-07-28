@@ -75,7 +75,7 @@ async function uploadFile(localPath) {
     if (shouldIgnore(localPath)) return
 
     const key     = localPathToS3Key(localPath)
-    const content = fs.readFileSync(localPath)
+    const content = await fs.promises.readFile(localPath)
 
     await s3.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: content }))
     console.log(`[UPLOAD] ${localPath} → s3://${BUCKET}/${key}`)
