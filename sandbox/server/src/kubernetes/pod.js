@@ -3,7 +3,7 @@ import { k8sCoreV1Api } from "./config.js";
 
 
 
-export async function createpod(sandboxid){
+export async function createpod(sandboxid,projectid){
 
     const podManifest={
         apiVersion:"v1",
@@ -72,7 +72,59 @@ export async function createpod(sandboxid){
                     mountPath:"/workspace"
                 }]
 
-            }]
+            },
+        {
+           name:"sync-agent",
+           image:"sync-agent:latest",
+           imagePullPolicy:"Always",
+           resources:{
+             requests:{
+               memory:"256Mi",
+               cpu:"250m"
+             },
+             limits:{
+               memory:"512Mi",
+               cpu:"500m"
+             }
+           },
+           volumeMounts:[{
+             name:"workspace-volume",
+             mountPath:"/workspace"
+           }],
+           env:[
+            {
+                name:"PROJECT_ID",
+                value:projectid
+            },
+            {
+                name:"AWS_ACCESS_KEY_ID",
+                valueFrom:{
+                    secretKeyRef:{
+                        name:"aws",
+                        key:"AWS_ACCESS_KEY_ID"
+                    }
+                }
+            },
+            {
+                name:"AWS_SECRET_ACCESS_KEY",
+                valueFrom:{
+                    secretKeyRef:{
+                        name:"aws",
+                        key:"AWS_SECRET_ACCESS_KEY"
+                    }
+                }
+            },
+            {
+                name:"AWS_REGION",
+                valueFrom:{
+                    secretKeyRef:{
+                        name:"aws",
+                        key:"AWS_REGION"
+                    }
+                }
+            }
+           ]
+        }]
         }
         
         
