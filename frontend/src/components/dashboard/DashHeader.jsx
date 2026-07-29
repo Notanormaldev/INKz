@@ -1,12 +1,20 @@
+import { useNavigate } from 'react-router-dom'
 import './DashHeader.css'
 
 /**
  * Top header bar — INKz logo + "New Project" button.
  */
 export default function DashHeader({ onNewProject }) {
+  const navigate = useNavigate()
+
   return (
     <header className="dash-header">
-      <div className="dash-logo" aria-label="INKz">
+      <div
+        className="dash-logo"
+        aria-label="INKz"
+        onClick={() => navigate('/')}
+        title="Go to Home"
+      >
         <span>I</span>
         <span>N</span>
         <span>K</span>

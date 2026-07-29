@@ -1,128 +1,124 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import LoadingScreen from '../components/LoadingScreen'
 import './Landing.css'
 
-const SANDBOX_API = '/api/sandbox/start'
-
 export default function Landing() {
-  const [loading, setLoading] = useState(false)
-  const [loadingMsg, setLoadingMsg] = useState('')
   const navigate = useNavigate()
-
-  async function handleNewProject() {
-    setLoading(true)
-    setLoadingMsg('Initialising sandbox environment…')
-
-    try {
-      setTimeout(() => setLoadingMsg('Allocating Kubernetes pod…'), 800)
-      setTimeout(() => setLoadingMsg('Mounting workspace volume…'), 2000)
-      setTimeout(() => setLoadingMsg('Starting dev server…'), 3500)
-
-      const res = await fetch(SANDBOX_API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      // Guard against HTML error pages from proxy/nginx before calling .json()
-      const contentType = res.headers.get('content-type') ?? ''
-      if (!contentType.includes('application/json')) {
-        const text = await res.text()
-        throw new Error(
-          `Server returned ${res.status} with non-JSON response.\n` +
-          `Make sure the sandbox API is running and accessible.\n` +
-          `Response preview: ${text.slice(0, 120)}`
-        )
-      }
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.message || `API error ${res.status}`)
-      }
-
-      setLoadingMsg('Sandbox ready. Launching IDE…')
-      await new Promise(r => setTimeout(r, 600))
-      navigate(`/workspace/${data.sandboxid}`, {
-        state: { previewUrl: data.preview }
-      })
-    } catch (err) {
-      console.error('[INKz] handleNewProject error:', err)
-      setLoadingMsg(`⚠ ${err.message.split('\n')[0]}`)
-      setTimeout(() => setLoading(false), 3000)
-    }
-  }
-
-  if (loading) return <LoadingScreen message={loadingMsg} />
 
   return (
     <div className="landing">
-      {/* Background grid */}
+      {/* Ambient background effects */}
       <div className="landing-grid" aria-hidden="true" />
-
-      {/* Ambient glow */}
       <div className="landing-glow" aria-hidden="true" />
 
+      {/* Top Navbar */}
+      <header className="landing-header">
+        <div className="nav-logo">
+          <span className="logo-i">I</span>
+          <span className="logo-n">N</span>
+          <span className="logo-k">K</span>
+          <span className="logo-z">z</span>
+          <div className="ink-drop-mini" aria-hidden="true" />
+        </div>
+        <button
+          className="nav-projects-btn"
+          onClick={() => navigate('/projects')}
+        >
+          View Projects →
+        </button>
+      </header>
+
       <main className="landing-content">
-        {/* Logo */}
-        <div className="logo-block">
-          <div className="logo-mark" aria-hidden="true">
-            <span className="logo-i">I</span>
-            <span className="logo-n">N</span>
-            <span className="logo-k">K</span>
-            <span className="logo-z">z</span>
-            <div className="ink-drop" aria-hidden="true" />
-          </div>
-          <p className="tagline">YOUR CODE. YOUR CANVAS.</p>
+        {/* Brand Hero Badge */}
+        <div className="brand-badge">
+          <span className="badge-pulse" />
+          <span>Next-Gen Cloud IDE</span>
         </div>
 
-        {/* Hero text */}
-        <div className="hero-text">
-          <h1>
-            The cloud IDE that<br />
+        {/* Hero Section */}
+        <div className="hero-section">
+          <div className="logo-block">
+            <div className="logo-mark" aria-hidden="true">
+              <span className="logo-i">I</span>
+              <span className="logo-n">N</span>
+              <span className="logo-k">K</span>
+              <span className="logo-z">z</span>
+              <div className="ink-drop" aria-hidden="true" />
+            </div>
+            <p className="tagline">YOUR CODE. YOUR CANVAS.</p>
+          </div>
+
+          <h1 className="hero-heading">
+            The Cloud IDE that<br />
             <span className="hero-accent">thinks while you ship.</span>
           </h1>
-          <p className="hero-sub">
-            Every project runs in its own isolated sandbox.
-            AI writes, you decide. Files change in real time.
+
+          <p className="hero-description">
+            INKz is an instant, browser-based cloud development platform.
+            Every workspace runs inside an isolated Kubernetes pod with real-time S3 file sync,
+            an integrated dev server, and a built-in AI coding partner.
           </p>
+
+          <div className="cta-group">
+            <button
+              id="start-projects-btn"
+              className="cta-primary-btn"
+              onClick={() => navigate('/projects')}
+            >
+              <span>Start Coding</span>
+              <span className="btn-arrow">→</span>
+              <span className="btn-shimmer" aria-hidden="true" />
+            </button>
+          </div>
         </div>
 
-        {/* CTA */}
-        <button
-          id="new-project-btn"
-          className="new-project-btn"
-          onClick={handleNewProject}
-        >
-          <span className="btn-icon">+</span>
-          New Project
-          <span className="btn-shimmer" aria-hidden="true" />
-        </button>
-
-        {/* Stats row */}
+        {/* Stats Row */}
         <div className="stats-row">
-          <div className="stat">
+          <div className="stat-card">
             <span className="stat-value">~4s</span>
-            <span className="stat-label">sandbox boot</span>
+            <span className="stat-label">Sandbox Boot</span>
           </div>
           <div className="stat-divider" />
-          <div className="stat">
+          <div className="stat-card">
             <span className="stat-value">K8s</span>
-            <span className="stat-label">isolated pods</span>
+            <span className="stat-label">Isolated Pods</span>
           </div>
           <div className="stat-divider" />
-          <div className="stat">
-            <span className="stat-value">AI</span>
-            <span className="stat-label">powered edits</span>
+          <div className="stat-card">
+            <span className="stat-value">S3 Sync</span>
+            <span className="stat-label">Persistent Storage</span>
           </div>
         </div>
+
+        {/* Feature Grid */}
+        <section className="features-section">
+          <h2 className="features-title">Why Developers Choose INKz</h2>
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon">⚡</div>
+              <h3>Instant Isolated Sandboxes</h3>
+              <p>Spin up fresh Docker/Kubernetes container environments in seconds. Zero local setup required.</p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">☁</div>
+              <h3>Real-Time S3 Persistence</h3>
+              <p>Your workspace files are continuously mirrored to AWS S3. Stop or resume anytime without losing progress.</p>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">🤖</div>
+              <h3>AI-Powered Pair Programming</h3>
+              <p>Integrated intelligent assistant capable of understanding your codebase, fixing bugs, and writing components.</p>
+            </div>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}
       <footer className="landing-footer">
-        <span>INKz</span>
+        <span>INKz Platform</span>
         <span className="footer-sep">·</span>
-        <span>Cloud-native coding, reimagined</span>
+        <span>Cloud-Native Development Reimagined</span>
       </footer>
     </div>
   )

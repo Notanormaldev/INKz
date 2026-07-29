@@ -22,6 +22,7 @@
   line-height: 1;
   color: #fff;
   user-select: none;
+  cursor: pointer;
 }
 
 .dash-logo .logo-z {
