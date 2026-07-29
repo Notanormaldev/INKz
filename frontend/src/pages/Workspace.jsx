@@ -8,6 +8,7 @@ import Terminal from '../components/Terminal'
 import Preview from '../components/Preview'
 import { useFiles } from '../hooks/useFiles'
 import { useChat } from '../hooks/useChat'
+import { useHeartbeat } from '../hooks/useHeartbeat'
 import './Workspace.css'
 
 // Panel layout modes
@@ -19,6 +20,10 @@ export default function Workspace() {
   const { sandboxId } = useParams()
   const location = useLocation()
   const previewUrl = location.state?.previewUrl
+  const projectId  = location.state?.projectId
+
+  // Keep both Redis TTLs alive every 5 min so the pod isn't killed mid-session
+  useHeartbeat(sandboxId, projectId)
 
   const [activePanel, setActivePanel] = useState('editor')
   const [terminalOpen, setTerminalOpen] = useState(true)

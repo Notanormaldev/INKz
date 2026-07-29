@@ -47,7 +47,7 @@ export default function Dashboard() {
       clearTimeout(t1); clearTimeout(t2); clearTimeout(t3)
       setLaunchMsg('Sandbox ready. Launching IDE…')
       await new Promise(r => setTimeout(r, 600))
-      navigate(`/workspace/${sandboxid}`, { state: { previewUrl: preview } })
+      navigate(`/workspace/${sandboxid}`, { state: { previewUrl: preview, projectId: project._id } })
     } catch (err) {
       setLaunching(false)
       setError(err.message)

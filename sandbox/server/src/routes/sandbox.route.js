@@ -2,7 +2,7 @@ import { Router } from "express";
 import { createpod } from '../kubernetes/pod.js'
 import { createservice } from '../kubernetes/service.js'
 import { v7 as uuid } from 'uuid'
-import { createsandboxkey, createprojectkey, getactivesandbox } from '../config/redis.js'
+import { createsandboxkey, createprojectkey, getactivesandbox, refreshTTL } from '../config/redis.js'
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import Project from "../models/project.model.js";
 import { k8sCoreV1Api } from '../kubernetes/config.js'
@@ -168,6 +168,19 @@ router.get('/status/:projectid', authMiddleware, async (req, res) => {
         // Pod not found in k8s (e.g. Redis key still alive but pod was force-deleted)
         return res.status(200).json({ status: 'stopped', sandboxid: null, preview: null })
     }
+})
+
+/**
+ * Heartbeat — called by the frontend every ~5 min while the workspace is open.
+ * Resets TTL on BOTH Redis keys so neither expires mid-session.
+ */
+router.post('/heartbeat', authMiddleware, async (req, res) => {
+    const { projectid, sandboxid } = req.body
+    if (!projectid || !sandboxid) {
+        return res.status(400).json({ message: 'projectid and sandboxid are required' })
+    }
+    await refreshTTL(sandboxid, projectid)
+    return res.status(200).json({ message: 'TTL refreshed' })
 })
 
 /**
