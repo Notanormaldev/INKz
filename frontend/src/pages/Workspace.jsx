@@ -7,7 +7,11 @@ import ChatPanel from '../components/ChatPanel'
 import Terminal from '../components/Terminal'
 import Preview from '../components/Preview'
 import DeleteModal from '../components/dashboard/DeleteModal'
+import NewProjectModal from '../components/dashboard/NewProjectModal'
+import LoadingScreen from '../components/LoadingScreen'
+import '../components/dashboard/Modal.css'
 import { useFiles } from '../hooks/useFiles'
+import { useProjects } from '../hooks/useProjects'
 import { useChat } from '../hooks/useChat'
 import { useHeartbeat } from '../hooks/useHeartbeat'
 import './Workspace.css'
@@ -82,11 +86,53 @@ export default function Workspace() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const { projects, createProject, startSandbox } = useProjects()
   const [editorTheme, setEditorTheme] = useState(() => localStorage.getItem('inkz-editor-theme') || 'vs-dark')
   const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem('inkz-editor-fontsize')) || 13)
   const [wordWrap, setWordWrap] = useState(() => localStorage.getItem('inkz-editor-wordwrap') || 'off')
   const [themeMenuOpen, setThemeMenuOpen] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showHomeModal, setShowHomeModal] = useState(false)
+  const [showConfirmNewModal, setShowConfirmNewModal] = useState(false)
+  const [showNewModal, setShowNewModal] = useState(false)
+  const [launching, setLaunching] = useState(false)
+  const [launchMsg, setLaunchMsg] = useState('')
+
+  async function handleCreateNewProject(title) {
+    setShowNewModal(false)
+    setLaunching(true)
+    setLaunchMsg(`Creating project "${title}"…`)
+
+    try {
+      const newProj = await createProject(title)
+      setLaunchMsg(`Starting sandbox for "${title}"…`)
+      const { sandboxid, preview } = await startSandbox(newProj._id, setLaunchMsg)
+
+      setLaunchMsg('Sandbox ready! Launching workspace…')
+      await new Promise(r => setTimeout(r, 600))
+      navigate(`/workspace/${sandboxid}`, { state: { previewUrl: preview, projectId: newProj._id } })
+      setLaunching(false)
+    } catch (err) {
+      setLaunching(false)
+      alert(err.message || 'Failed to create project')
+    }
+  }
+
+  const handleSwitchProject = useCallback(async (targetProject) => {
+    setLaunching(true)
+    setLaunchMsg(`Switching to "${targetProject.title || 'Project'}"…`)
+
+    try {
+      const { sandboxid, preview } = await startSandbox(targetProject._id, setLaunchMsg)
+      setLaunchMsg('Sandbox ready! Launching workspace…')
+      await new Promise(r => setTimeout(r, 400))
+      navigate(`/workspace/${sandboxid}`, { state: { previewUrl: preview, projectId: targetProject._id } })
+      setLaunching(false)
+    } catch (err) {
+      setLaunching(false)
+      alert(err.message || 'Failed to start sandbox for target project')
+    }
+  }, [startSandbox, navigate])
 
   async function handleWorkspaceDeleteConfirm() {
     if (!projectId) return
@@ -225,26 +271,16 @@ export default function Workspace() {
     )
   }
 
+  if (launching) {
+    return <LoadingScreen message={launchMsg} />
+  }
+
   // ── Pod-starting overlay ─────────────────────────────────────────────────
   if (podStatus === 'starting' || podStatus === 'unknown') {
     return (
-      <div className="workspace">
-        <TopBar sandboxId={sandboxId} activePanel={activePanel} onPanelChange={setActivePanel} />
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center',
-          justifyContent: 'center', flex: 1, height: 'calc(100vh - 48px)',
-          gap: '16px', color: 'var(--text-secondary, #8b949e)'
-        }}>
-          <div style={{
-            width: 36, height: 36, border: '3px solid var(--accent, #d4631a)',
-            borderTopColor: 'transparent', borderRadius: '50%',
-            animation: 'spin 0.8s linear infinite'
-          }} />
-          <span style={{ fontSize: 14 }}>
-            {podStatus === 'unknown' ? 'Checking sandbox…' : `Pod is starting… (${podPhase})`}
-          </span>
-        </div>
-      </div>
+      <LoadingScreen
+        message={podStatus === 'unknown' ? 'Connecting to K8s sandbox…' : `Pod is starting… (${podPhase})`}
+      />
     )
   }
 
@@ -254,7 +290,11 @@ export default function Workspace() {
         sandboxId={sandboxId}
         activePanel={activePanel}
         onPanelChange={setActivePanel}
-        onDeleteProject={projectId ? () => setShowDeleteModal(true) : undefined}
+        onGoHome={() => setShowHomeModal(true)}
+        onNewProject={() => setShowConfirmNewModal(true)}
+        onSwitchProject={handleSwitchProject}
+        projects={projects}
+        currentProjectId={projectId}
       />
 
       <div className="workspace-body">
@@ -490,6 +530,63 @@ export default function Workspace() {
           project={{ _id: projectId, title: 'this project' }}
           onClose={() => setShowDeleteModal(false)}
           onConfirm={handleWorkspaceDeleteConfirm}
+        />
+      )}
+
+      {showHomeModal && (
+        <div className="modal-overlay" onClick={() => setShowHomeModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Leave Workspace?</h2>
+              <button className="modal-close" onClick={() => setShowHomeModal(false)}>✕</button>
+            </div>
+            <p className="modal-danger-text">
+              Are you sure you want to leave this workspace and return to Home?
+            </p>
+            <div className="modal-actions">
+              <button className="modal-cancel-btn" onClick={() => setShowHomeModal(false)}>
+                Cancel
+              </button>
+              <button className="modal-submit-btn" onClick={() => navigate('/')}>
+                Yes, Go Home
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showConfirmNewModal && (
+        <div className="modal-overlay" onClick={() => setShowConfirmNewModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Create New Project?</h2>
+              <button className="modal-close" onClick={() => setShowConfirmNewModal(false)}>✕</button>
+            </div>
+            <p className="modal-danger-text">
+              Are you sure you want to leave the current workspace and create a new project?
+            </p>
+            <div className="modal-actions">
+              <button className="modal-cancel-btn" onClick={() => setShowConfirmNewModal(false)}>
+                Cancel
+              </button>
+              <button
+                className="modal-submit-btn"
+                onClick={() => {
+                  setShowConfirmNewModal(false)
+                  setShowNewModal(true)
+                }}
+              >
+                Yes, Create New
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showNewModal && (
+        <NewProjectModal
+          onClose={() => setShowNewModal(false)}
+          onCreate={handleCreateNewProject}
         />
       )}
     </div>

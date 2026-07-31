@@ -1,7 +1,19 @@
+import { useState, useEffect } from 'react'
 import './Preview.css'
 
 export default function Preview({ previewUrl, sandboxId }) {
   const url = previewUrl || `http://${sandboxId}.preview.localhost`
+  const [loading, setLoading] = useState(true)
+  const [key, setKey] = useState(0)
+
+  useEffect(() => {
+    setLoading(true)
+  }, [url])
+
+  function handleReload() {
+    setLoading(true)
+    setKey(k => k + 1)
+  }
 
   return (
     <div className="preview-panel">
@@ -17,10 +29,7 @@ export default function Preview({ previewUrl, sandboxId }) {
         </div>
         <button
           className="preview-reload"
-          onClick={() => {
-            const iframe = document.getElementById('preview-iframe')
-            if (iframe) iframe.src = iframe.src
-          }}
+          onClick={handleReload}
           title="Reload preview"
         >
           ⟳
@@ -35,13 +44,25 @@ export default function Preview({ previewUrl, sandboxId }) {
           ↗
         </a>
       </div>
-      <iframe
-        id="preview-iframe"
-        src={url}
-        title="Sandbox preview"
-        className="preview-frame"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
-      />
+
+      <div className="preview-container">
+        {loading && (
+          <div className="preview-loading-overlay">
+            <div className="preview-spinner" />
+            <span>Loading app preview…</span>
+          </div>
+        )}
+
+        <iframe
+          key={key}
+          id="preview-iframe"
+          src={url}
+          title="Sandbox preview"
+          className="preview-frame"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-modals allow-popups"
+          onLoad={() => setLoading(false)}
+        />
+      </div>
     </div>
   )
 }

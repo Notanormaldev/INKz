@@ -89,6 +89,23 @@
   color: var(--text-muted);
 }
 
+.chat-empty-logo {
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: var(--text-primary, #e8eaf0);
+  user-select: none;
+}
+
+.chat-empty-z {
+  font-style: italic;
+  font-size: 34px;
+  color: var(--accent, #d4631a);
+}
+
 .chat-empty p {
   font-size: 13px;
   color: var(--text-secondary);

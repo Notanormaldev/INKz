@@ -8,7 +8,7 @@
   flex-shrink: 0;
   gap: 0;
   position: relative;
-  z-index: 10;
+  z-index: 1000;
 }
 
 /* ── Left ── */
@@ -58,46 +58,176 @@
   background: var(--border-light);
 }
 
-.topbar-sandbox-id {
-  font-size: 11px;
+/* Project Selector */
+.topbar-project-selector {
+  position: relative;
+}
+
+.topbar-project-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card, #161922);
+  border: 1px solid var(--border-light, #282d3c);
+  border-radius: var(--radius-sm, 6px);
+  padding: 4px 10px;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.topbar-project-btn:hover,
+.topbar-project-btn.open {
+  border-color: var(--accent);
+  background: var(--bg-hover);
+}
+
+.topbar-project-icon {
+  color: var(--accent);
+  font-size: 12px;
+}
+
+.topbar-project-title {
+  font-weight: 600;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar-project-count-badge {
+  background: var(--bg-input, #0d0f14);
+  border: 1px solid var(--border, #222633);
+  border-radius: 12px;
+  padding: 1px 7px;
+  font-size: 10px;
   color: var(--text-muted);
 }
 
-.topbar-sandbox-id code {
-  font-family: var(--font-mono);
-  background: var(--bg-hover);
-  padding: 1px 5px;
-  border-radius: 3px;
-  color: var(--text-secondary);
-  font-size: 11px;
+.topbar-project-chevron {
+  font-size: 14px;
+  color: var(--text-muted);
+  transform: rotate(90deg);
+  transition: transform 0.15s;
+}
+.topbar-project-chevron.open {
+  transform: rotate(-90deg);
 }
 
-.topbar-live-badge {
+/* Project Dropdown Menu */
+.topbar-project-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  background: var(--bg-card, #161922);
+  border: 1px solid var(--border-light, #2b3040);
+  border-radius: var(--radius-md, 8px);
+  padding: 6px;
+  width: 260px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7);
+  z-index: 1001;
+}
+
+.project-dropdown-header {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 4px 8px 6px;
+  text-transform: uppercase;
+}
+
+.project-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.project-dropdown-item {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px 8px;
-  background: rgba(63,185,80,0.1);
-  border: 1px solid rgba(63,185,80,0.25);
-  border-radius: 20px;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.project-dropdown-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.project-dropdown-item.active {
+  background: var(--accent-dim, rgba(212, 99, 26, 0.15));
+  color: var(--accent);
+}
+
+.project-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.project-item-icon {
   font-size: 10px;
-  font-weight: 600;
-  color: var(--green);
+}
+
+.project-item-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-current-badge {
+  font-size: 9px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  color: var(--accent);
+  background: rgba(212, 99, 26, 0.2);
+  padding: 1px 5px;
+  border-radius: 3px;
 }
 
-.live-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--green);
-  animation: live-pulse 2s ease-in-out infinite;
+.project-dropdown-footer {
+  border-top: 1px solid var(--border, #222633);
+  margin-top: 6px;
+  padding-top: 6px;
 }
 
-@keyframes live-pulse {
-  0%, 100% { box-shadow: 0 0 3px rgba(63,185,80,0.4); }
-  50% { box-shadow: 0 0 8px rgba(63,185,80,0.8); }
+.project-dropdown-new-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(212, 99, 26, 0.1);
+  border: 1px dashed var(--accent, #d4631a);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--accent, #d4631a);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.project-dropdown-new-btn:hover {
+  background: rgba(212, 99, 26, 0.25);
+  border-style: solid;
 }
 
 /* ── Center ── */
@@ -153,41 +283,44 @@
   justify-content: flex-end;
 }
 
-.topbar-action {
-  padding: 5px 14px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
+/* Home Button */
+.topbar-home-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: var(--bg-card, #161922);
+  border: 1px solid var(--border-light, #2b3040);
+  color: var(--text-secondary, #9da7be);
+  border-radius: var(--radius-sm, 6px);
   font-family: var(--font-sans);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.topbar-action:hover {
-  background: #e8742a;
+.topbar-home-btn:hover {
+  background: var(--bg-hover, #202430);
+  border-color: var(--accent, #d4631a);
+  color: var(--text-primary, #ffffff);
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(212, 99, 26, 0.18);
 }
 
-.topbar-delete-btn {
-  padding: 5px 12px;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.25);
-  color: var(--red, #f85149);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.15s;
+.topbar-home-btn:active {
+  transform: translateY(0);
 }
 
-.topbar-delete-btn:hover {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: rgba(239, 68, 68, 0.45);
+.home-btn-svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted, #717d96);
+  transition: color 0.2s, transform 0.2s;
+}
+
+.topbar-home-btn:hover .home-btn-svg {
+  color: var(--accent, #d4631a);
+  transform: scale(1.1);
 }

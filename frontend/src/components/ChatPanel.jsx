@@ -130,7 +130,7 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
       <div className="chat-header">
         <div className="chat-header-left">
           <div className="chat-ai-dot" />
-          <span className="chat-title">INKz AI</span>
+          <span className="chat-title">INKz</span>
           {streaming && <span className="chat-streaming-badge">streaming…</span>}
         </div>
       </div>
@@ -139,14 +139,17 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
       <div className="chat-messages" id="chat-messages">
         {messages.length === 0 ? (
           <div className="chat-empty">
-            <div className="chat-empty-icon">◈</div>
-            <p>Ask INKz AI to build, fix, or explain anything in your project.</p>
+            <div className="chat-empty-logo">
+              <span>I</span><span>N</span><span>K</span>
+              <span className="chat-empty-z">z</span>
+            </div>
+            <p>Ask INKz to build, fix, or explain anything in your project.</p>
             <div className="chat-suggestions">
               {[
-                'Add a dark mode toggle',
-                'Create a login page',
-                'Fix all TypeScript errors',
-                'Add a REST API fetch'
+                'Build a responsive navbar',
+                'Create a hero section',
+                'Add a contact form',
+                'Create a modal component',
               ].map(s => (
                 <button key={s} className="chat-suggestion" onClick={() => { setInput(s); inputRef.current?.focus() }}>
                   {s}
