@@ -9,6 +9,66 @@
   to { transform: rotate(360deg); }
 }
 
+/* ── Mobile Workspace Guard ── */
+.mobile-workspace-guard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background: var(--bg-main, #0a0b0e);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.mw-guard-card {
+  background: var(--bg-card, #12141a);
+  border: 1px solid var(--border-light, #232733);
+  border-radius: var(--radius-lg, 12px);
+  padding: 32px 24px;
+  max-width: 380px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.mw-guard-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.mw-guard-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary, #e8eaf0);
+  margin: 0;
+}
+
+.mw-guard-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary, #8b949e);
+  margin: 0;
+}
+
+.mw-guard-btn {
+  margin-top: 8px;
+  background: var(--accent, #d4631a);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s;
+}
+.mw-guard-btn:hover { opacity: 0.9; }
+
 
 /* ── Body ── */
 .workspace-body {
@@ -38,8 +98,119 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   padding: 8px 0;
+}
+
+.activity-bar-top,
+.activity-bar-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 4px;
+  width: 100%;
+}
+
+.activity-bar-bottom {
+  position: relative;
+}
+
+/* Settings popover menu */
+.settings-popover-menu {
+  position: absolute;
+  bottom: 0;
+  left: 44px;
+  background: var(--bg-card, #161922);
+  border: 1px solid var(--border-light, #2b3040);
+  border-radius: var(--radius-md, 8px);
+  padding: 10px 12px;
+  width: 210px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-section-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.settings-section-title.danger {
+  color: var(--red, #f85149);
+}
+
+.settings-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.settings-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+}
+
+.settings-select {
+  background: var(--bg-input, #0d0f14);
+  border: 1px solid var(--border-light, #232733);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-primary, #e8eaf0);
+  font-size: 11px;
+  padding: 4px 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+.settings-toggle-btn {
+  background: var(--bg-input, #0d0f14);
+  border: 1px solid var(--border-light, #232733);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.settings-toggle-btn.active {
+  background: var(--accent-dim, rgba(212, 99, 26, 0.2));
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.settings-divider {
+  height: 1px;
+  background: var(--border, #1f232e);
+  margin: 2px 0;
+}
+
+.settings-danger-btn {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--red, #f85149);
+  border-radius: var(--radius-sm, 4px);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s;
+  width: 100%;
+}
+
+.settings-danger-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
 }
 
 .activity-btn {

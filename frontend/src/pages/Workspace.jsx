@@ -6,6 +6,7 @@ import Editor from '../components/Editor'
 import ChatPanel from '../components/ChatPanel'
 import Terminal from '../components/Terminal'
 import Preview from '../components/Preview'
+import DeleteModal from '../components/dashboard/DeleteModal'
 import { useFiles } from '../hooks/useFiles'
 import { useChat } from '../hooks/useChat'
 import { useHeartbeat } from '../hooks/useHeartbeat'
@@ -79,6 +80,31 @@ export default function Workspace() {
   const [activePanel, setActivePanel] = useState('editor')
   const [terminalOpen, setTerminalOpen] = useState(true)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768)
+  const [editorTheme, setEditorTheme] = useState(() => localStorage.getItem('inkz-editor-theme') || 'vs-dark')
+  const [fontSize, setFontSize] = useState(() => Number(localStorage.getItem('inkz-editor-fontsize')) || 13)
+  const [wordWrap, setWordWrap] = useState(() => localStorage.getItem('inkz-editor-wordwrap') || 'off')
+  const [themeMenuOpen, setThemeMenuOpen] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+
+  async function handleWorkspaceDeleteConfirm() {
+    if (!projectId) return
+    const res = await fetch(`/api/sandbox/project/${projectId}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    })
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.message || 'Failed to delete project')
+    navigate('/')
+  }
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Track in-editor (unsaved) changes separately from persisted content
   const [localEdits, setLocalEdits] = useState({})
 
@@ -172,7 +198,32 @@ export default function Workspace() {
     closeFile(filePath)
   }, [closeFile])
 
+  const handleOpenFile = useCallback((filePath) => {
+    openFile(filePath)
+    if (activePanel === 'preview') {
+      setActivePanel('editor')
+    }
+  }, [openFile, activePanel])
+
   const draggingActive = isDraggingSidebar || isDraggingTerminal || isDraggingSplit || isDraggingChat
+
+  // ── Mobile Screen Guard (Workspace requires desktop) ─────────────────────
+  if (isMobile) {
+    return (
+      <div className="mobile-workspace-guard">
+        <div className="mw-guard-card">
+          <div className="mw-guard-icon">💻</div>
+          <h2 className="mw-guard-title">Desktop Required</h2>
+          <p className="mw-guard-text">
+            The INKz workspace live editor and sandbox tools require a desktop browser screen.
+          </p>
+          <button className="mw-guard-btn" onClick={() => navigate('/')}>
+            ← Return to Dashboard
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   // ── Pod-starting overlay ─────────────────────────────────────────────────
   if (podStatus === 'starting' || podStatus === 'unknown') {
@@ -203,6 +254,7 @@ export default function Workspace() {
         sandboxId={sandboxId}
         activePanel={activePanel}
         onPanelChange={setActivePanel}
+        onDeleteProject={projectId ? () => setShowDeleteModal(true) : undefined}
       />
 
       <div className="workspace-body">
@@ -213,24 +265,120 @@ export default function Workspace() {
         >
           {/* Activity bar */}
           <div className="activity-bar">
-            <button
-              className="activity-btn active"
-              title="Explorer"
-              onClick={() => setSidebarCollapsed(c => !c)}
-            >
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 5h18M3 12h18M3 19h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button className="activity-btn" title="Search">
-              <svg viewBox="0 0 24 24" fill="none">
-                <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.5"/>
-                <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-              </svg>
-            </button>
-            <button className="activity-btn" title="Terminal" onClick={() => setTerminalOpen(t => !t)}>
-              <svg viewBox="0 0 24 24" fill="none"><path d="M4 17l6-6-6-6M12 19h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
+            <div className="activity-bar-top">
+              <button
+                className={`activity-btn ${!searchOpen ? 'active' : ''}`}
+                title="Explorer"
+                onClick={() => {
+                  if (sidebarCollapsed) setSidebarCollapsed(false)
+                  setSearchOpen(false)
+                }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M3 5h18M3 12h18M3 19h18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </button>
+              <button
+                className={`activity-btn ${searchOpen ? 'active' : ''}`}
+                title="Search Files"
+                onClick={() => {
+                  if (sidebarCollapsed) setSidebarCollapsed(false)
+                  setSearchOpen(s => !s)
+                }}
+              >
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </button>
+              <button className="activity-btn" title="Terminal" onClick={() => setTerminalOpen(t => !t)}>
+                <svg viewBox="0 0 24 24" fill="none"><path d="M4 17l6-6-6-6M12 19h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            </div>
+
+            <div className="activity-bar-bottom">
+              <button
+                className={`activity-btn ${themeMenuOpen ? 'active' : ''}`}
+                title="Settings & Preferences"
+                onClick={() => setThemeMenuOpen(o => !o)}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+              </button>
+
+              {themeMenuOpen && (
+                <div className="settings-popover-menu">
+                  <div className="settings-section-title">PREFERENCES</div>
+
+                  <div className="settings-field">
+                    <label className="settings-label">Theme</label>
+                    <select
+                      className="settings-select"
+                      value={editorTheme}
+                      onChange={e => {
+                        setEditorTheme(e.target.value)
+                        localStorage.setItem('inkz-editor-theme', e.target.value)
+                      }}
+                    >
+                      <option value="vs-dark">Dark (Default)</option>
+                      <option value="one-dark">One Dark Pro</option>
+                      <option value="monokai">Monokai</option>
+                      <option value="hc-black">High Contrast</option>
+                      <option value="vs">Light</option>
+                    </select>
+                  </div>
+
+                  <div className="settings-field">
+                    <label className="settings-label">Font Size</label>
+                    <select
+                      className="settings-select"
+                      value={fontSize}
+                      onChange={e => {
+                        const val = Number(e.target.value)
+                        setFontSize(val)
+                        localStorage.setItem('inkz-editor-fontsize', val)
+                      }}
+                    >
+                      <option value="12">12px</option>
+                      <option value="13">13px (Default)</option>
+                      <option value="14">14px</option>
+                      <option value="16">16px</option>
+                    </select>
+                  </div>
+
+                  <div className="settings-field">
+                    <label className="settings-label">Word Wrap</label>
+                    <button
+                      className={`settings-toggle-btn ${wordWrap === 'on' ? 'active' : ''}`}
+                      onClick={() => {
+                        const next = wordWrap === 'on' ? 'off' : 'on'
+                        setWordWrap(next)
+                        localStorage.setItem('inkz-editor-wordwrap', next)
+                      }}
+                    >
+                      {wordWrap === 'on' ? '✓ On' : 'Off'}
+                    </button>
+                  </div>
+
+                  <div className="settings-divider" />
+                  <div className="settings-section-title danger">DANGER ZONE</div>
+
+                  {projectId && (
+                    <button
+                      className="settings-danger-btn"
+                      onClick={() => {
+                        setThemeMenuOpen(false)
+                        setShowDeleteModal(true)
+                      }}
+                    >
+                      🗑 Delete Project
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* File tree panel */}
@@ -239,9 +387,11 @@ export default function Workspace() {
               files={files}
               activeFile={activeFile}
               openFiles={displayFiles}
-              onOpenFile={openFile}
+              onOpenFile={handleOpenFile}
               onRefresh={fetchFiles}
               loading={filesLoading}
+              searchOpen={searchOpen}
+              setSearchOpen={setSearchOpen}
             />
           )}
         </div>
@@ -268,6 +418,9 @@ export default function Workspace() {
                 onClose={handleClose}
                 onSave={handleSave}
                 onChange={handleChange}
+                theme={editorTheme}
+                fontSize={fontSize}
+                wordWrap={wordWrap}
               />
 
               {/* Terminal toggle */}
@@ -331,6 +484,14 @@ export default function Workspace() {
           />
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeleteModal
+          project={{ _id: projectId, title: 'this project' }}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleWorkspaceDeleteConfirm}
+        />
+      )}
     </div>
   )
 }

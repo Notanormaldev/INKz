@@ -133,9 +133,6 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
           <span className="chat-title">INKz AI</span>
           {streaming && <span className="chat-streaming-badge">streaming…</span>}
         </div>
-        <div className="chat-header-right">
-          <span className="chat-model">mistral-medium</span>
-        </div>
       </div>
 
       {/* Messages */}

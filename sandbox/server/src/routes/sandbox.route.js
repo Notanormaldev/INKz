@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { createpod } from '../kubernetes/pod.js'
-import { createservice } from '../kubernetes/service.js'
+import { createpod, deletepod } from '../kubernetes/pod.js'
+import { createservice, deleteservice } from '../kubernetes/service.js'
 import { v7 as uuid } from 'uuid'
 import { createsandboxkey, createprojectkey, getactivesandbox, refreshTTL } from '../config/redis.js'
 import { authMiddleware } from "../middleware/auth.middleware.js";
@@ -187,12 +187,25 @@ router.post('/heartbeat', authMiddleware, async (req, res) => {
 /**
  * Permanently delete a project:
  *   1. Verify ownership
- *   2. Delete all S3 files under the projectid prefix
- *   3. Remove the project from the DB
+ *   2. Stop & delete active Kubernetes pod & service if running
+ *   3. Delete all S3 files under the projectid prefix
+ *   4. Remove the project from the DB
  */
 router.delete('/project/:id', authMiddleware, async (req, res) => {
     const project = await Project.findOne({ _id: req.params.id, user: req.user.id })
     if (!project) return res.status(404).json({ message: 'Project not found' })
+
+    // Stop & delete active pod/service in Kubernetes if running
+    const sandboxid = await getactivesandbox(req.params.id)
+    if (sandboxid) {
+        try {
+            await deletepod(sandboxid)
+            await deleteservice(sandboxid)
+            console.log(`[DELETE] Deleted active pod/service for sandbox ${sandboxid}`)
+        } catch (e) {
+            console.error(`[DELETE] Pod cleanup error (ignoring):`, e.message)
+        }
+    }
 
     // Delete S3 files permanently
     await deleteProjectS3Files(req.params.id)

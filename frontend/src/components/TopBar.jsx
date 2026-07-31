@@ -23,10 +23,6 @@ export default function TopBar({ sandboxId, activePanel, onPanelChange }) {
         <span className="topbar-sandbox-id">
           sandbox/<code>{sandboxId?.slice(0, 8)}</code>
         </span>
-        <span className="topbar-live-badge">
-          <span className="live-dot" />
-          live
-        </span>
       </div>
 
       {/* Center: panel switcher */}

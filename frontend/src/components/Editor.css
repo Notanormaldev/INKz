@@ -7,14 +7,41 @@
 }
 
 /* ── Tab bar ── */
+
 .tab-bar {
   display: flex;
   align-items: stretch;
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border);
   overflow-x: auto;
   flex-shrink: 0;
   height: 36px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-bar-actions {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  flex-shrink: 0;
+}
+
+.editor-theme-select {
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 3px 8px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.editor-theme-select:hover,
+.editor-theme-select:focus {
+  border-color: var(--accent);
+  color: var(--text-primary);
 }
 
 .tab-bar::-webkit-scrollbar { height: 2px; }
@@ -88,14 +115,9 @@
 /* ── Editor body ── */
 .editor-body {
   flex: 1;
+  min-height: 0;
+  position: relative;
   overflow: hidden;
-}
-
-/* Force Monaco background */
-.editor-body .monaco-editor,
-.editor-body .monaco-editor .margin,
-.editor-body .overflow-guard {
-  background: var(--bg-base) !important;
 }
 
 /* ── Empty state ── */
@@ -135,4 +157,67 @@
   font-family: var(--font-mono);
   color: var(--text-muted) !important;
   opacity: 0.6;
+}
+
+/* ── Theme background overrides for container & empty state ── */
+.editor-container[data-editor-theme="vs"] {
+  background: #ffffff !important;
+  color: #1e1e1e !important;
+}
+.editor-container[data-editor-theme="vs"] .editor-empty-logo {
+  color: var(--accent) !important;
+}
+.editor-container[data-editor-theme="vs"] .editor-empty p {
+  color: #555555 !important;
+}
+.editor-container[data-editor-theme="vs"] .tab-bar {
+  background: #f3f3f3 !important;
+  border-bottom-color: #e0e0e0 !important;
+}
+.editor-container[data-editor-theme="vs"] .tab {
+  border-right-color: #e0e0e0 !important;
+  background: #eaeaea !important;
+}
+.editor-container[data-editor-theme="vs"] .tab.active {
+  background: #ffffff !important;
+}
+
+.editor-container[data-editor-theme="monokai"] {
+  background: #272822 !important;
+  color: #f8f8f2 !important;
+}
+.editor-container[data-editor-theme="monokai"] .editor-empty-logo {
+  color: #f92672 !important;
+}
+.editor-container[data-editor-theme="monokai"] .tab-bar {
+  background: #1e1f1c !important;
+}
+.editor-container[data-editor-theme="monokai"] .tab.active {
+  background: #272822 !important;
+}
+
+.editor-container[data-editor-theme="one-dark"] {
+  background: #282c34 !important;
+  color: #abb2bf !important;
+}
+.editor-container[data-editor-theme="one-dark"] .editor-empty-logo {
+  color: #61afef !important;
+}
+.editor-container[data-editor-theme="one-dark"] .tab-bar {
+  background: #21252b !important;
+}
+.editor-container[data-editor-theme="one-dark"] .tab.active {
+  background: #282c34 !important;
+}
+
+.editor-container[data-editor-theme="hc-black"] {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+.editor-container[data-editor-theme="hc-black"] .tab-bar {
+  background: #000000 !important;
+  border-bottom-color: #333333 !important;
+}
+.editor-container[data-editor-theme="hc-black"] .tab.active {
+  background: #111111 !important;
 }
