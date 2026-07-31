@@ -57,11 +57,17 @@ function Message({ msg }) {
         {!isUser && msg.toolCalls?.map((tc, i) => (
           <ToolCallBadge key={i} tc={tc} />
         ))}
-        {msg.content && (
+        {msg.content ? (
           <div className={`msg-content ${msg.streaming ? 'streaming' : ''}`}>
             <MessageContent text={msg.content} />
           </div>
-        )}
+        ) : (!isUser && !msg.streaming && !msg.toolCalls?.length && (
+          <div className="msg-content">
+            <span className="msg-text" style={{ opacity: 0.6, fontStyle: 'italic' }}>
+              No text response returned.
+            </span>
+          </div>
+        ))}
         {msg.streaming && !msg.content && (
           <div className="msg-typing">
             <span /><span /><span />

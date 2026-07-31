@@ -90,6 +90,8 @@ export function useChat(sandboxId) {
   }, [sandboxId, streaming])
 
   function handleChunk(chunk) {
+    if (!chunk || typeof chunk !== 'object') return
+
     // writer calls emit { title, data } objects
     if (chunk.title !== undefined) {
       updateLastAssistant(m => ({
@@ -99,34 +101,65 @@ export function useChat(sandboxId) {
       return
     }
 
-    // LangGraph streaming updates
-    if (chunk.agent?.messages) {
-      for (const msg of chunk.agent.messages) {
-        if (msg.content && typeof msg.content === 'string') {
-          updateLastAssistant(m => ({ ...m, content: m.content + msg.content }))
-        }
-        if (msg.tool_calls?.length) {
-          updateLastAssistant(m => ({
-            ...m,
-            toolCalls: [...(m.toolCalls || []), ...msg.tool_calls]
-          }))
+    // Helper to safely extract text from LangChain message objects
+    const extractText = (msg) => {
+      if (!msg) return ''
+      const raw = msg.content ?? msg.kwargs?.content ?? msg.text ?? ''
+      if (typeof raw === 'string') return raw
+      if (Array.isArray(raw)) {
+        return raw.map(c => typeof c === 'string' ? c : (c.text || c.content || '')).join('')
+      }
+      return ''
+    }
+
+    // Helper to extract tool calls from LangChain message objects
+    const extractToolCalls = (msg) => {
+      if (!msg) return []
+      return msg.tool_calls ?? msg.kwargs?.tool_calls ?? []
+    }
+
+    // Inspect all top-level keys of chunk (agent, model, tools, etc.)
+    for (const key of Object.keys(chunk)) {
+      const node = chunk[key]
+      if (!node || typeof node !== 'object') continue
+
+      const msgList = Array.isArray(node.messages)
+        ? node.messages
+        : (Array.isArray(node) ? node : null)
+
+      if (msgList) {
+        for (const msg of msgList) {
+          const text = extractText(msg)
+          const toolCalls = extractToolCalls(msg)
+
+          if (text && key !== 'tools') {
+            updateLastAssistant(m => ({ ...m, content: m.content + text }))
+          }
+
+          if (toolCalls.length > 0) {
+            updateLastAssistant(m => ({
+              ...m,
+              toolCalls: [...(m.toolCalls || []), ...toolCalls]
+            }))
+          }
+
+          if (key === 'tools' && text) {
+            updateLastAssistant(m => ({
+              ...m,
+              toolCalls: (m.toolCalls || []).map((tc, i) =>
+                i === (m.toolCalls?.length ?? 1) - 1
+                  ? { ...tc, result: text }
+                  : tc
+              )
+            }))
+          }
         }
       }
     }
 
-    if (chunk.tools?.messages) {
-      for (const msg of chunk.tools.messages) {
-        if (msg.content) {
-          updateLastAssistant(m => ({
-            ...m,
-            toolCalls: (m.toolCalls || []).map((tc, i) =>
-              i === (m.toolCalls?.length ?? 1) - 1
-                ? { ...tc, result: msg.content }
-                : tc
-            )
-          }))
-        }
-      }
+    // Direct content on chunk itself (if plain object format)
+    if (typeof chunk.content === 'string' && chunk.content) {
+      updateLastAssistant(m => ({ ...m, content: m.content + chunk.content }))
     }
   }
 
