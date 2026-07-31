@@ -94,3 +94,31 @@
   border-color: var(--accent);
   color: #fff;
 }
+
+.pc-open-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.pc-open-btn--loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.pc-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: pc-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pc-spin {
+  to { transform: rotate(360deg); }
+}

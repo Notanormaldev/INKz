@@ -18,8 +18,9 @@ function timeAgo(dateStr) {
  *   project   — project object { _id, title, createdAt }
  *   onOpen    — called when user clicks "Open Workspace"
  *   onDelete  — called when user clicks the delete icon
+ *   opening   — boolean: true while this project's sandbox is being launched
  */
-export default function ProjectCard({ project, onOpen, onDelete }) {
+export default function ProjectCard({ project, onOpen, onDelete, opening = false }) {
   const initial = project.title.charAt(0).toUpperCase()
 
   return (
@@ -31,6 +32,7 @@ export default function ProjectCard({ project, onOpen, onDelete }) {
           title="Delete project"
           aria-label={`Delete ${project.title}`}
           onClick={(e) => { e.stopPropagation(); onDelete(project) }}
+          disabled={opening}
         >
           🗑
         </button>
@@ -43,10 +45,14 @@ export default function ProjectCard({ project, onOpen, onDelete }) {
 
       <button
         id={`open-project-${project._id}`}
-        className="pc-open-btn"
+        className={`pc-open-btn ${opening ? 'pc-open-btn--loading' : ''}`}
         onClick={() => onOpen(project)}
+        disabled={opening}
       >
-        Open Workspace →
+        {opening
+          ? <><span className="pc-spinner" /> Opening…</>
+          : 'Open Workspace →'
+        }
       </button>
     </article>
   )

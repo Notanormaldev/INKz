@@ -4,7 +4,33 @@ const API = {
   projects:      '/api/sandbox/projects',
   createProject: '/api/sandbox/project',
   startSandbox:  '/api/sandbox/start',
+  status:        (id) => `/api/sandbox/status/${id}`,
   deleteProject: (id) => `/api/sandbox/project/${id}`,
+}
+
+/**
+ * Polls /status/:projectId every 2 s until the pod is 'ready' or timeout.
+ * @param {string} projectId
+ * @param {Function} [onProgress] - called with a status string on each poll
+ * @param {number} [timeoutMs=120000]
+ * @returns {Promise<{sandboxid, preview}>}
+ */
+async function pollUntilReady(projectId, onProgress, timeoutMs = 120_000) {
+  const deadline = Date.now() + timeoutMs
+  while (Date.now() < deadline) {
+    await new Promise(r => setTimeout(r, 2000))
+    const res  = await fetch(API.status(projectId), { credentials: 'include' })
+    const data = await res.json()
+    if (data.status === 'ready') {
+      return { sandboxid: data.sandboxid, preview: data.preview }
+    }
+    if (data.status === 'stopped') {
+      throw new Error('Pod stopped unexpectedly during startup')
+    }
+    // still 'starting' — notify caller if they want to show progress
+    onProgress?.(`Pod is starting… (${data.phase ?? 'Pending'})`)
+  }
+  throw new Error('Sandbox did not become ready within 2 minutes')
 }
 
 /**
@@ -62,9 +88,11 @@ export function useProjects() {
     setProjects(prev => prev.filter(p => p._id !== projectId))
   }, [])
 
-  // ── Start sandbox ─────────────────────────────────────────────────────────
+  // ── Start sandbox (waits until pod is truly Ready) ────────────────────────
 
-  const startSandbox = useCallback(async (projectId) => {
+  const startSandbox = useCallback(async (projectId, onProgress) => {
+    // 1. Ask the server to create/resume the pod
+    onProgress?.('Requesting sandbox…')
     const res  = await fetch(API.startSandbox, {
       method:      'POST',
       credentials: 'include',
@@ -73,7 +101,15 @@ export function useProjects() {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.message || 'Failed to start sandbox')
-    return { sandboxid: data.sandboxid, preview: data.preview }
+
+    // 2. If the pod was already running, it's immediately ready
+    if (data.message === 'Sandbox already running') {
+      return { sandboxid: data.sandboxid, preview: data.preview }
+    }
+
+    // 3. New pod was just created — wait for it to actually be Ready
+    onProgress?.('Pod created, waiting for containers to start…')
+    return await pollUntilReady(projectId, onProgress)
   }, [])
 
   return {

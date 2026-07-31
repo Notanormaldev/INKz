@@ -1,3 +1,4 @@
+import React from 'react'
 import ProjectCard from './ProjectCard'
 import './ProjectGrid.css'
 
@@ -45,6 +46,18 @@ function EmptyState({ onNewProject }) {
  *   onNewProject  — () => void  (used by empty-state CTA)
  */
 export default function ProjectGrid({ projects, fetching, onOpen, onDelete, onNewProject }) {
+  // Track which project is being opened — disable that card's button immediately
+  const [openingId, setOpeningId] = React.useState(null)
+
+  async function handleOpen(project) {
+    if (openingId) return                // already opening something
+    setOpeningId(project._id)            // button disable ho gaya
+    try {
+      await onOpen(project)
+    } finally {
+      setOpeningId(null)                 // done (success or error) — reset
+    }
+  }
   if (fetching) {
     return (
       <div className="project-grid">
@@ -63,8 +76,9 @@ export default function ProjectGrid({ projects, fetching, onOpen, onDelete, onNe
         <ProjectCard
           key={project._id}
           project={project}
-          onOpen={onOpen}
+          onOpen={handleOpen}
           onDelete={onDelete}
+          opening={openingId === project._id}
         />
       ))}
     </div>

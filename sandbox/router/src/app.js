@@ -52,18 +52,18 @@ function getagentproxy(sandboxid) {
 
 app.use((req, res, next) => {
     const host = req.headers.host
+    if (!host) return next()
 
-    const sandboxid = host.split('.')[0]
+    const parts = host.split('.')
+    const sandboxid = parts[0]
 
-
-    if (host.split('.')[1] == "agent") {
-        return getagentproxy(sandboxid)(req, res, next);
+    if (parts[1] === 'agent') {
+        return getagentproxy(sandboxid)(req, res, next)
     } else {
-
-        return getproxy(sandboxid)(req, res, next);
+        return getproxy(sandboxid)(req, res, next)
     }
-
 })
+
 
 const wsProxy = httpProxy.createProxyServer({
     changeOrigin: true,

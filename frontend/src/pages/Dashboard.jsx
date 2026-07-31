@@ -38,13 +38,9 @@ export default function Dashboard() {
     setLaunchMsg(`Starting sandbox for "${project.title}"…`)
 
     try {
-      const t1 = setTimeout(() => setLaunchMsg('Allocating Kubernetes pod…'),   900)
-      const t2 = setTimeout(() => setLaunchMsg('Mounting workspace volume…'),  2200)
-      const t3 = setTimeout(() => setLaunchMsg('Starting dev server…'),        3800)
+      // startSandbox now polls /status internally and calls onProgress with real updates
+      const { sandboxid, preview } = await startSandbox(project._id, setLaunchMsg)
 
-      const { sandboxid, preview } = await startSandbox(project._id)
-
-      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3)
       setLaunchMsg('Sandbox ready. Launching IDE…')
       await new Promise(r => setTimeout(r, 600))
       navigate(`/workspace/${sandboxid}`, { state: { previewUrl: preview, projectId: project._id } })

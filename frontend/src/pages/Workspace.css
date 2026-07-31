@@ -5,6 +5,11 @@
   overflow: hidden;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
 /* ── Body ── */
 .workspace-body {
   flex: 1;

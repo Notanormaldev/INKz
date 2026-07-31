@@ -95,7 +95,7 @@ function MessageContent({ text }) {
   )
 }
 
-export default function ChatPanel({ messages, streaming, onSend, onStop, sandboxId }) {
+export default function ChatPanel({ messages, streaming, onSend, onStop, sandboxId, podReady = true }) {
   const [input, setInput] = useState('')
   const bottomRef = useRef(null)
   const inputRef = useRef(null)
@@ -106,7 +106,7 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
 
   function handleSend() {
     const text = input.trim()
-    if (!text || streaming) return
+    if (!text || streaming || !podReady || !onSend) return
     onSend(text)
     setInput('')
   }
@@ -167,9 +167,9 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask AI to modify your project…"
+            placeholder={podReady ? 'Ask AI to modify your project…' : 'Waiting for sandbox to be ready…'}
             rows={1}
-            disabled={streaming}
+            disabled={streaming || !podReady}
           />
           {streaming ? (
             <button className="chat-stop-btn" onClick={onStop} title="Stop generation">
@@ -179,9 +179,9 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
             <button
               className="chat-send-btn"
               onClick={handleSend}
-              disabled={!input.trim()}
+              disabled={!input.trim() || !podReady}
               id="chat-send-btn"
-              title="Send (Enter)"
+              title={podReady ? 'Send (Enter)' : 'Waiting for sandbox…'}
             >
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -190,7 +190,7 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
             </button>
           )}
         </div>
-        <p className="chat-hint">Enter to send · Shift+Enter for newline</p>
+        <p className="chat-hint">{podReady ? 'Enter to send · Shift+Enter for newline' : 'Sandbox is starting…'}</p>
       </div>
     </div>
   )

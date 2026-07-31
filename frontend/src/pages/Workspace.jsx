@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useEffect, useState, useCallback, useRef } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import TopBar from '../components/TopBar'
 import FileTree from '../components/FileTree'
 import Editor from '../components/Editor'
@@ -16,11 +16,62 @@ import './Workspace.css'
 // 'preview' → FileTree | Preview         | Chat
 // 'split'   → FileTree | Editor+Terminal | Preview + Chat
 
+const STATUS_API = (projectId) => `/api/sandbox/status/${projectId}`
+
 export default function Workspace() {
   const { sandboxId } = useParams()
   const location = useLocation()
+  const navigate  = useNavigate()
   const previewUrl = location.state?.previewUrl
   const projectId  = location.state?.projectId
+
+  // ── Pod readiness gate ───────────────────────────────────────────────────
+  // 'unknown'  = haven't checked yet (mount)
+  // 'starting' = pod exists but containers not ready
+  // 'ready'    = all containers Ready → unlock UI
+  // 'stopped'  = no pod in Redis → redirect to dashboard
+  const [podStatus, setPodStatus]   = useState('unknown')
+  const [podPhase,  setPodPhase]    = useState('')
+  const pollTimerRef = useRef(null)
+
+  useEffect(() => {
+    if (!projectId) return // no projectId in state (direct URL) → assume ready
+
+    async function checkStatus() {
+      try {
+        const res  = await fetch(STATUS_API(projectId), { credentials: 'include' })
+        const data = await res.json()
+
+        if (data.status === 'ready') {
+          setPodStatus('ready')
+          clearInterval(pollTimerRef.current)
+        } else if (data.status === 'stopped') {
+          setPodStatus('stopped')
+          clearInterval(pollTimerRef.current)
+        } else {
+          // 'starting' — keep polling
+          setPodStatus('starting')
+          setPodPhase(data.phase ?? 'Pending')
+        }
+      } catch {
+        // network error — keep polling
+      }
+    }
+
+    checkStatus()
+    pollTimerRef.current = setInterval(checkStatus, 3000)
+
+    return () => clearInterval(pollTimerRef.current)
+  }, [projectId])
+
+  // If the pod is confirmed stopped (stale URL / page refresh after pod died) → go back
+  useEffect(() => {
+    if (podStatus === 'stopped') {
+      navigate('/', { replace: true })
+    }
+  }, [podStatus, navigate])
+
+  const podReady = podStatus === 'ready' || !projectId // unlock if no projectId (dev fallback)
 
   // Keep both Redis TTLs alive every 5 min so the pod isn't killed mid-session
   useHeartbeat(sandboxId, projectId)
@@ -51,10 +102,10 @@ export default function Workspace() {
   const [isDraggingSplit, setIsDraggingSplit] = useState(false)
   const [isDraggingChat, setIsDraggingChat] = useState(false)
 
-  // Load files on mount
+  // Load files only once pod is ready
   useEffect(() => {
-    if (sandboxId) fetchFiles()
-  }, [sandboxId, fetchFiles])
+    if (sandboxId && podReady) fetchFiles()
+  }, [sandboxId, podReady, fetchFiles])
 
   // Mouse move and up handlers for resizing
   useEffect(() => {
@@ -109,11 +160,12 @@ export default function Workspace() {
   }, [])
 
   const handleSave = useCallback(async (filePath) => {
+    if (!podReady) return // block saves while pod not ready — edits are kept in localEdits
     const content = localEdits[filePath] ?? openFiles[filePath]
     if (content === undefined) return
     await saveFile(filePath, content)
     setLocalEdits(prev => { const n = { ...prev }; delete n[filePath]; return n })
-  }, [localEdits, openFiles, saveFile])
+  }, [localEdits, openFiles, saveFile, podReady])
 
   const handleClose = useCallback((filePath) => {
     setLocalEdits(prev => { const n = { ...prev }; delete n[filePath]; return n })
@@ -121,6 +173,29 @@ export default function Workspace() {
   }, [closeFile])
 
   const draggingActive = isDraggingSidebar || isDraggingTerminal || isDraggingSplit || isDraggingChat
+
+  // ── Pod-starting overlay ─────────────────────────────────────────────────
+  if (podStatus === 'starting' || podStatus === 'unknown') {
+    return (
+      <div className="workspace">
+        <TopBar sandboxId={sandboxId} activePanel={activePanel} onPanelChange={setActivePanel} />
+        <div style={{
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', flex: 1, height: 'calc(100vh - 48px)',
+          gap: '16px', color: 'var(--text-secondary, #8b949e)'
+        }}>
+          <div style={{
+            width: 36, height: 36, border: '3px solid var(--accent, #d4631a)',
+            borderTopColor: 'transparent', borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite'
+          }} />
+          <span style={{ fontSize: 14 }}>
+            {podStatus === 'unknown' ? 'Checking sandbox…' : `Pod is starting… (${podPhase})`}
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className={`workspace ${draggingActive ? 'dragging-active' : ''}`}>
@@ -213,7 +288,8 @@ export default function Workspace() {
                     onMouseDown={() => setIsDraggingTerminal(true)}
                   />
                   <div className="terminal-area" style={{ height: terminalHeight }}>
-                    <Terminal sandboxId={sandboxId} />
+                    {/* Terminal connects only when pod is ready */}
+                    <Terminal sandboxId={podReady ? sandboxId : null} podReady={podReady} />
                   </div>
                 </>
               )}
@@ -248,13 +324,13 @@ export default function Workspace() {
           <ChatPanel
             messages={messages}
             streaming={streaming}
-            onSend={sendMessage}
+            onSend={podReady ? sendMessage : undefined}
             onStop={stopStreaming}
             sandboxId={sandboxId}
+            podReady={podReady}
           />
         </div>
       </div>
     </div>
   )
 }
-

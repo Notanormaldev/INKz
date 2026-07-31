@@ -6,14 +6,18 @@ import { io } from 'socket.io-client'
 import '@xterm/xterm/css/xterm.css'
 import './Terminal.css'
 
-export default function Terminal({ sandboxId }) {
+const MAX_RECONNECT_ATTEMPTS = 5
+
+export default function Terminal({ sandboxId, podReady }) {
   const containerRef = useRef(null)
   const termRef = useRef(null)
   const socketRef = useRef(null)
   const fitRef = useRef(null)
+  const reconnectAttemptsRef = useRef(0)
+  const reconnectTimerRef = useRef(null)
 
   useEffect(() => {
-    if (!sandboxId || !containerRef.current) return
+    if (!containerRef.current) return
 
     // Init xterm
     const term = new XTerm({
@@ -60,29 +64,62 @@ export default function Terminal({ sandboxId }) {
     termRef.current = term
     fitRef.current = fitAddon
 
-    // Connect socket.io to agent via proxied connection
-    const socket = io({
-      query: { sandboxId },
-      transports: ['websocket']
-    })
-    socketRef.current = socket
+    // If pod isn't ready yet, show a waiting message — don't connect socket
+    if (!sandboxId || !podReady) {
+      term.writeln('\r\x1b[33m── Waiting for sandbox to be ready… ──\x1b[0m\r')
+      const resizeObserver = new ResizeObserver(() => {
+        try { fitAddon.fit() } catch {}
+      })
+      resizeObserver.observe(containerRef.current)
+      return () => {
+        resizeObserver.disconnect()
+        term.dispose()
+      }
+    }
 
-    socket.on('connect', () => {
-      term.writeln('\r\x1b[2m── connected to sandbox terminal ──\x1b[0m\r')
-    })
+    // ── Connect socket with auto-reconnect on disconnect ──────────────────
+    function connect() {
+      const socket = io({
+        query: { sandboxId },
+        transports: ['websocket'],
+        reconnection: false  // we handle reconnection manually for user feedback
+      })
+      socketRef.current = socket
 
-    socket.on('terminal-output', (data) => {
-      term.write(data)
-    })
+      socket.on('connect', () => {
+        reconnectAttemptsRef.current = 0
+        if (reconnectAttemptsRef.current > 0) {
+          term.writeln('\r\x1b[32m── reconnected ──\x1b[0m\r')
+        } else {
+          term.writeln('\r\x1b[2m── connected to sandbox terminal ──\x1b[0m\r')
+        }
+      })
 
-    socket.on('disconnect', () => {
-      term.writeln('\r\x1b[31m── terminal disconnected ──\x1b[0m\r')
-    })
+      socket.on('terminal-output', (data) => {
+        term.write(data)
+      })
 
-    // Send keystrokes to pty
-    term.onData((data) => {
-      socket.emit('terminal-input', data)
-    })
+      socket.on('disconnect', () => {
+        term.writeln('\r\x1b[31m── terminal disconnected ──\x1b[0m\r')
+
+        // Auto-reconnect with exponential backoff (up to MAX_RECONNECT_ATTEMPTS)
+        if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+          const delay = Math.min(1000 * 2 ** reconnectAttemptsRef.current, 16000)
+          reconnectAttemptsRef.current++
+          term.writeln(`\r\x1b[33m── reconnecting in ${delay / 1000}s (attempt ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})… ──\x1b[0m\r`)
+          reconnectTimerRef.current = setTimeout(connect, delay)
+        } else {
+          term.writeln('\r\x1b[31m── max reconnect attempts reached. Refresh to retry. ──\x1b[0m\r')
+        }
+      })
+
+      // Send keystrokes to pty
+      term.onData((data) => {
+        socket.emit('terminal-input', data)
+      })
+    }
+
+    connect()
 
     // Resize handler
     const resizeObserver = new ResizeObserver(() => {
@@ -91,11 +128,12 @@ export default function Terminal({ sandboxId }) {
     resizeObserver.observe(containerRef.current)
 
     return () => {
+      clearTimeout(reconnectTimerRef.current)
       resizeObserver.disconnect()
-      socket.disconnect()
+      socketRef.current?.disconnect()
       term.dispose()
     }
-  }, [sandboxId])
+  }, [sandboxId, podReady])
 
   return (
     <div className="terminal-wrapper">
