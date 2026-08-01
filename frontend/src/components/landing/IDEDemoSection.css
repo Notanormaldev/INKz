@@ -1,0 +1,224 @@
+/* IDE Demo Showcase Section */
+.demo-section-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+}
+
+.demo-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.ide-showcase-window {
+  background: #09090d;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 40px rgba(249, 115, 22, 0.15);
+}
+
+.ide-top-bar {
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.window-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.w-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.w-dot.red { background: #ef4444; }
+.w-dot.yellow { background: #f59e0b; }
+.w-dot.green { background: #10b981; }
+
+.window-title {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #a1a1aa;
+}
+
+.k8s-pod-badge {
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+/* IDE Split */
+.ide-main-split {
+  display: grid;
+  grid-template-columns: 200px 1fr 300px;
+  min-height: 420px;
+}
+
+/* File Tree */
+.ide-file-tree {
+  background: #0d0d12;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem 0.5rem;
+}
+
+.tree-header {
+  font-family: monospace;
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  color: #71717a;
+  padding: 0 0.5rem 0.75rem;
+}
+
+.tree-item {
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: #a1a1aa;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+}
+
+.tree-item:hover, .tree-item.active {
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
+}
+
+/* Monaco Editor Panel */
+.ide-editor-panel {
+  background: #111116;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-tabs {
+  background: #0d0d12;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+}
+
+.editor-tab {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #ffffff;
+  padding: 8px 16px;
+  background: #111116;
+  border-top: 2px solid #f97316;
+}
+
+.editor-code-view {
+  padding: 1.25rem;
+  margin: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: #38bdf8;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+
+/* Right Panel */
+.ide-preview-ai-panel {
+  background: #0b0b10;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.live-preview-box {
+  background: #14141d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  flex: 1;
+}
+
+.preview-top {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 10px;
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: #a1a1aa;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: #10b981;
+  border-radius: 50%;
+}
+
+.preview-mock-screen {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: calc(100% - 30px);
+}
+
+.preview-mock-screen h3 {
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+.preview-mock-btn {
+  background: #f97316;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ai-chat-box {
+  background: rgba(249, 115, 22, 0.06);
+  border: 1px solid rgba(249, 115, 22, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.ai-chat-head {
+  font-family: monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #f97316;
+  margin-bottom: 6px;
+}
+
+.ai-chat-msg {
+  font-size: 0.78rem;
+  color: #d4d4d8;
+  line-height: 1.4;
+}
+
+.ai-role {
+  font-weight: 700;
+  color: #f97316;
+}
+
+@media (max-width: 900px) {
+  .ide-main-split {
+    grid-template-columns: 1fr;
+  }
+}

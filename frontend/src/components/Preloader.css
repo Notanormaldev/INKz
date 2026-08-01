@@ -1,0 +1,42 @@
+/* Preloader Container Overlay */
+.inkz-preloader-container {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  overflow: hidden;
+}
+
+/* STAGE 1: SVG Curtain Loader Overlay */
+.svg-curtain-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* STAGE 2: 5 Vertical Curtain Panels (Closed initially, sliding UP staggered) */
+.curtain-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.curtain-panel {
+  flex: 1;
+  height: 100%;
+  background-color: #f97316; /* Brand Orange */
+  border-right: 1px solid rgba(10, 10, 10, 0.15);
+  box-shadow: 0 0 50px rgba(249, 115, 22, 0.4);
+  transform-origin: top center;
+  will-change: transform;
+}
+
+.curtain-panel:last-child {
+  border-right: none;
+}
