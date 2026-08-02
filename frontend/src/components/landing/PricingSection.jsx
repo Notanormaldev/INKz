@@ -25,7 +25,7 @@ export default function PricingSection({ onOpenAuth }) {
       features: [
         '5 Concurrent K8s Pods',
         '50GB S3 Persistent Storage',
-        'GPT-4o AI Pair Programmer',
+        'Mistral AI Pair Programmer',
         'Priority Pod Warm Boot (~2s)',
         'Custom Port Forwarding',
         'Priority Email & Chat Support'

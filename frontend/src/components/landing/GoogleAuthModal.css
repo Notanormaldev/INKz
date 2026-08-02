@@ -27,8 +27,8 @@
 .auth-modal-card {
   position: relative;
   width: 100%;
-  max-width: 440px;
-  background: rgba(18, 18, 24, 0.9);
+  max-width: 420px;
+  background: rgba(18, 18, 24, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 20px;
   padding: 2.5rem 2rem;
@@ -105,10 +105,10 @@
   color: #a1a1aa;
   margin: 0;
   line-height: 1.5;
-  max-width: 340px;
+  max-width: 320px;
 }
 
-/* Body & Buttons */
+/* Body */
 .auth-body {
   width: 100%;
   display: flex;
@@ -116,14 +116,15 @@
   gap: 1.25rem;
 }
 
+/* Google Sign In Button */
 .google-signin-btn {
   width: 100%;
-  height: 48px;
+  height: 52px;
   background: #ffffff;
   color: #111827;
   border: none;
   border-radius: 12px;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -137,7 +138,7 @@
 .google-signin-btn:hover {
   background: #f4f4f5;
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.25);
 }
 
 .google-signin-btn:active {
@@ -149,92 +150,7 @@
   height: 20px;
 }
 
-.auth-spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(0, 0, 0, 0.15);
-  border-top-color: #f97316;
-  border-radius: 50%;
-  animation: authSpin 0.8s linear infinite;
-}
-
-@keyframes authSpin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.auth-divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  color: #52525b;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0.25rem 0;
-}
-
-.auth-divider::before,
-.auth-divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.auth-divider span {
-  padding: 0 0.75rem;
-}
-
-/* Email Form */
-.email-auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.email-auth-form input {
-  width: 100%;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 0 1rem;
-  color: #ffffff;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s ease;
-}
-
-.email-auth-form input:focus {
-  border-color: #f97316;
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
-}
-
-.email-submit-btn {
-  width: 100%;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.email-submit-btn:hover:not(:disabled) {
-  background: #f97316;
-  border-color: #f97316;
-  color: #ffffff;
-}
-
-.email-submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+/* Footer Note */
 .auth-footer-note {
   margin-top: 1.75rem;
   font-size: 0.72rem;

@@ -7,11 +7,15 @@ export default function HeroSection({ onOpenAuth }) {
   const [btnHover, setBtnHover] = useState(false)
   const [showDemoModal, setShowDemoModal] = useState(false)
 
-  const handleStartCoding = () => {
-    const user = localStorage.getItem('inkz_user')
-    if (user) {
-      navigate('/projects')
-    } else {
+  const handleStartCoding = async () => {
+    try {
+      const res = await fetch('/api/auth/me', { credentials: 'include' })
+      if (res.ok) {
+        navigate('/projects')
+      } else {
+        onOpenAuth()
+      }
+    } catch {
       onOpenAuth()
     }
   }
@@ -91,7 +95,7 @@ export default function HeroSection({ onOpenAuth }) {
             <span className="tech-badge">🐳 Docker Sandboxes</span>
             <span className="tech-badge">⚡ Vite DevServer</span>
             <span className="tech-badge">📝 Monaco Editor</span>
-            <span className="tech-badge">🤖 OpenAI GPT-4o</span>
+            <span className="tech-badge">🤖 Mistral AI</span>
             <span className="tech-badge">⚡ Socket.IO HMR</span>
             <span className="tech-badge">🔴 Redis TTL Cache</span>
             {/* Duplicated for smooth loop */}
@@ -100,7 +104,7 @@ export default function HeroSection({ onOpenAuth }) {
             <span className="tech-badge">🐳 Docker Sandboxes</span>
             <span className="tech-badge">⚡ Vite DevServer</span>
             <span className="tech-badge">📝 Monaco Editor</span>
-            <span className="tech-badge">🤖 OpenAI GPT-4o</span>
+            <span className="tech-badge">🤖 Mistral AI</span>
           </div>
         </div>
       </div>

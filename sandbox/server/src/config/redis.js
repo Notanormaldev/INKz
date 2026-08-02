@@ -1,6 +1,7 @@
 import Redis from 'ioredis'
 import { deletepod } from '../kubernetes/pod.js';
 import { deleteservice } from '../kubernetes/service.js';
+import { k8sCoreV1Api } from '../kubernetes/config.js';
 
 export const redis = new Redis(process.env.REDIS_URL);
 const subscriber = new Redis(process.env.REDIS_URL);
@@ -37,6 +38,41 @@ export async function refreshTTL(sandboxid, projectid) {
     if (projectid) await redis.expire(`project:${projectid}`, SANDBOX_TTL)
 }
 
+/**
+ * Reaper — periodic safety check that scans K8s for sandbox pods
+ * whose Redis key has expired, ensuring zero zombie pods even if
+ * a pub/sub expiry event was missed during a server restart.
+ */
+export async function reapOrphanedPods() {
+    try {
+        const podsRes = await k8sCoreV1Api.listNamespacedPod({
+            namespace: 'default',
+            labelSelector: 'sandboxid'
+        })
+        const pods = podsRes.items || []
+        for (const pod of pods) {
+            const sandboxid = pod.metadata?.labels?.sandboxid
+            if (!sandboxid) continue
+            const exists = await redis.exists(`sandbox:${sandboxid}`)
+            if (!exists) {
+                console.log(`[REAPER] Cleaning up orphaned sandbox pod/service: ${sandboxid}`)
+                try {
+                    await deletepod(sandboxid)
+                    await deleteservice(sandboxid)
+                } catch (e) {
+                    console.error(`[REAPER] Failed to delete ${sandboxid}:`, e.message)
+                }
+            }
+        }
+    } catch (err) {
+        console.error('[REAPER] Error during pod cleanup scan:', err.message)
+    }
+}
+
+// Run reaper on startup and every 3 minutes
+reapOrphanedPods()
+setInterval(reapOrphanedPods, 3 * 60 * 1000)
+
 // ─── Keyspace expiry listener (auto-delete pod on inactivity) ────────────────
 
 subscriber.config('SET', 'notify-keyspace-events', 'Ex')
@@ -52,4 +88,5 @@ subscriber.on('message', async (channel, key) => {
     await deleteservice(sandboxid)
 })
 
-export default { subscriber }
+export default { subscriber }
+
