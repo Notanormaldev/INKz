@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './ApplyCloud.css'
 
@@ -8,6 +8,11 @@ const SPOTS_TAKEN = 2
 
 export default function ApplyCloud() {
   const navigate = useNavigate()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   const [form, setForm] = useState({
     name: '',
     email: '',

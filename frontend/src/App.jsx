@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import ScrollToTop from './components/ScrollToTop'
 import Landing from './pages/Landing'
 import Dashboard from './pages/Dashboard'
 import Workspace from './pages/Workspace'
@@ -9,6 +10,7 @@ import Admin from './pages/Admin'
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/projects" element={<Dashboard />} />
@@ -20,3 +22,4 @@ export default function App() {
     </BrowserRouter>
   )
 }
+

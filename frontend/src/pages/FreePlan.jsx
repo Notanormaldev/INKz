@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './FreePlan.css'
 
@@ -34,6 +34,10 @@ const steps = [
 export default function FreePlan() {
   const navigate = useNavigate()
   const [copied, setCopied] = useState(null)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const handleCopy = (text, id) => {
     navigator.clipboard.writeText(text)

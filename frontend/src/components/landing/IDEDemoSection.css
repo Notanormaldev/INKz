@@ -39,9 +39,18 @@
   height: 10px;
   border-radius: 50%;
 }
-.w-dot.red { background: #ef4444; }
-.w-dot.yellow { background: #f59e0b; }
-.w-dot.green { background: #10b981; }
+
+.w-dot.red {
+  background: #ef4444;
+}
+
+.w-dot.yellow {
+  background: #f59e0b;
+}
+
+.w-dot.green {
+  background: #10b981;
+}
 
 .window-title {
   font-family: monospace;
@@ -92,7 +101,8 @@
   transition: all 0.2s ease;
 }
 
-.tree-item:hover, .tree-item.active {
+.tree-item:hover,
+.tree-item.active {
   background: rgba(249, 115, 22, 0.12);
   color: #f97316;
 }
