@@ -32,7 +32,7 @@ export default function DashHeader({ onNewProject }) {
     navigate('/')
   }
 
-  const isAdmin = user && user.email?.toLowerCase().trim() === 'harshpatelpc20051@gmail.com'
+  const isAdmin = user && (user.role === 'admin' || user.email?.toLowerCase().trim() === 'harshpatelpc20051@gmail.com')
 
   return (
     <>

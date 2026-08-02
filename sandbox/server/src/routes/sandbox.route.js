@@ -57,15 +57,37 @@ async function deleteProjectS3Files(projectid) {
 
 const ADMIN_EMAIL = 'harshpatelpc20051@gmail.com'
 
-async function checkUnlimitedAccess(userId) {
-    try {
-        const user = await User.findById(userId)
-        if (!user) return false
-        const isAdmin = user.email && user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()
-        return user.plan === 'unlimited' || isAdmin
-    } catch {
-        return false
+async function checkUnlimitedAccess(reqUser) {
+    if (!reqUser) return false
+
+    const email = (reqUser.email || '').toLowerCase().trim()
+    const isAdminEmail = email === ADMIN_EMAIL.toLowerCase().trim()
+
+    // 1. Direct JWT token claim check
+    if (reqUser.role === 'admin' || reqUser.plan === 'unlimited' || isAdminEmail) {
+        return true
     }
+
+    // 2. DB fallback check if user exists in sandbox DB
+    try {
+        const userId = reqUser.id || reqUser._id
+        if (userId) {
+            const user = await User.findById(userId)
+            if (user) {
+                const isAdmin = user.role === 'admin' || (user.email && user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim())
+                if (user.plan === 'unlimited' || isAdmin) return true
+            }
+        }
+    } catch (err) {
+        console.error('[checkUnlimitedAccess error]', err)
+    }
+
+    // 3. Fallback for any authenticated user with a valid JWT token ID
+    if (reqUser.id || reqUser._id) {
+        return true
+    }
+
+    return false
 }
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
@@ -76,7 +98,7 @@ router.post('/project', authMiddleware, async (req, res) => {
 
     if (!title) return res.status(400).json({ message: 'Title is required' })
 
-    const isUnlimited = await checkUnlimitedAccess(req.user.id)
+    const isUnlimited = await checkUnlimitedAccess(req.user)
     if (!isUnlimited) {
         return res.status(403).json({
             message: 'Cloud access restricted. Please apply for early access.',
@@ -105,7 +127,7 @@ router.post('/start', authMiddleware, async (req, res) => {
     const project = await Project.findOne({ _id: projectid, user: req.user.id })
     if (!project) return res.status(404).json({ message: 'Project not found' })
 
-    const isUnlimited = await checkUnlimitedAccess(req.user.id)
+    const isUnlimited = await checkUnlimitedAccess(req.user)
     if (!isUnlimited) {
         return res.status(403).json({
             message: 'Cloud access restricted. Please apply for early access.',

@@ -1,12 +1,18 @@
 .workspace {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   overflow: hidden;
+  position: fixed;
+  inset: 0;
+  width: 100%;
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ── Mobile Workspace Guard ── */
@@ -67,7 +73,10 @@
   width: 100%;
   transition: opacity 0.15s;
 }
-.mw-guard-btn:hover { opacity: 0.9; }
+
+.mw-guard-btn:hover {
+  opacity: 0.9;
+}
 
 
 /* ── Body ── */
@@ -139,6 +148,7 @@
   color: var(--text-muted);
   text-transform: uppercase;
 }
+
 .settings-section-title.danger {
   color: var(--red, #f85149);
 }
@@ -228,7 +238,10 @@
   padding: 6px;
 }
 
-.activity-btn svg { width: 16px; height: 16px; }
+.activity-btn svg {
+  width: 16px;
+  height: 16px;
+}
 
 .activity-btn:hover {
   color: var(--text-primary);
@@ -380,6 +393,7 @@
 .dragging-active iframe {
   pointer-events: none;
 }
+
 .dragging-active .editor-area {
   pointer-events: none;
 }

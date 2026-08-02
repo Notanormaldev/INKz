@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    host: '0.0.0.0',
+    allowedHosts: 'all',
     proxy: {
       // 1. Proxy agent API requests (e.g., /agent-api/{sandboxId}/list-files)
       '/agent-api': {

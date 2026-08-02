@@ -176,7 +176,12 @@ router.get('/google/callback', passport.authenticate('google', { scope: ['profil
             }
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT, { expiresIn: "1w" })
+        const token = jwt.sign({
+            id: user._id,
+            email: user.email,
+            role: isAdmin ? 'admin' : (user.role || 'user'),
+            plan: isAdmin ? 'unlimited' : (user.plan || 'free')
+        }, process.env.JWT, { expiresIn: "1w" })
 
         res.cookie("token", token, {
             httpOnly: true,

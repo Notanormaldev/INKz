@@ -96,8 +96,11 @@
   font-size: 32px;
   font-weight: 900;
   letter-spacing: -2px;
-  color: var(--text-primary, #e8eaf0);
   user-select: none;
+}
+
+.chat-empty-ink {
+  color: var(--text-primary, #e8eaf0);
 }
 
 .chat-empty-z {

@@ -140,7 +140,7 @@ export default function ChatPanel({ messages, streaming, onSend, onStop, sandbox
         {messages.length === 0 ? (
           <div className="chat-empty">
             <div className="chat-empty-logo">
-              <span>I</span><span>N</span><span>K</span>
+              <span className="chat-empty-ink">INK</span>
               <span className="chat-empty-z">z</span>
             </div>
             <p>Ask INKz to build, fix, or explain anything in your project.</p>

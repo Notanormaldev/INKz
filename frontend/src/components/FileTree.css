@@ -46,6 +46,7 @@
   padding: 4px 8px;
   outline: none;
 }
+
 .file-tree-search-input:focus {
   border-color: var(--accent);
 }
@@ -58,7 +59,10 @@
   cursor: pointer;
   padding: 2px 4px;
 }
-.file-tree-clear-search:hover { color: var(--text-primary); }
+
+.file-tree-clear-search:hover {
+  color: var(--text-primary);
+}
 
 .file-tree-refresh {
   background: none;
@@ -70,9 +74,21 @@
   display: flex;
   transition: color 0.15s, background 0.15s;
 }
-.file-tree-refresh:hover { color: var(--text-primary); background: var(--bg-hover); }
-.file-tree-refresh:disabled { opacity: 0.4; cursor: not-allowed; }
-.file-tree-refresh svg { width: 12px; height: 12px; }
+
+.file-tree-refresh:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.file-tree-refresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.file-tree-refresh svg {
+  width: 12px;
+  height: 12px;
+}
 
 .file-tree-body {
   flex: 1;
@@ -95,7 +111,11 @@
   animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .file-tree-empty {
   font-size: 12px;
@@ -145,7 +165,10 @@
   flex-shrink: 0;
   display: inline-block;
 }
-.tree-chevron.expanded { transform: rotate(90deg); }
+
+.tree-chevron.expanded {
+  transform: rotate(90deg);
+}
 
 .tree-folder-icon {
   font-size: 13px;
@@ -176,4 +199,4 @@
   flex-shrink: 0;
 }
 
-.tree-children { }
+.tree-children {}
