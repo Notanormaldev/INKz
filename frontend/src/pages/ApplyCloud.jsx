@@ -33,10 +33,21 @@ export default function ApplyCloud() {
       return
     }
     setLoading(true)
-    // Simulated submission — swap this with a real API call
-    await new Promise((r) => setTimeout(r, 1600))
-    setLoading(false)
-    setSubmitted(true)
+    setError('')
+    try {
+      const res = await fetch('/api/auth/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || 'Failed to submit application')
+      setLoading(false)
+      setSubmitted(true)
+    } catch (err) {
+      setLoading(false)
+      setError(err.message || 'Error submitting application')
+    }
   }
 
   return (
@@ -222,7 +233,7 @@ export default function ApplyCloud() {
                 ← Back to Home
               </button>
               <a
-                href="https://github.com/harshpatelpc20051/INKz"
+                href="https://github.com/Notanormaldev/INKz"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="apply-github-btn"

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import './FreePlan.css'
 
-const REPO_URL = 'https://github.com/harshpatelpc20051/INKz'
+const REPO_URL = 'https://github.com/Notanormaldev/INKz'
 
 const steps = [
   {

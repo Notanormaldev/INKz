@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { useProjects }      from '../hooks/useProjects'
@@ -7,16 +7,13 @@ import DashHeader            from '../components/dashboard/DashHeader'
 import ProjectGrid           from '../components/dashboard/ProjectGrid'
 import NewProjectModal       from '../components/dashboard/NewProjectModal'
 import DeleteModal           from '../components/dashboard/DeleteModal'
+import ApplyAccessModal      from '../components/dashboard/ApplyAccessModal'
 
 import './Dashboard.css'
 
-/**
- * Dashboard page — thin orchestrator.
- * All API logic lives in useProjects.
- * All UI sub-pieces live in their own components.
- */
 export default function Dashboard() {
   const navigate = useNavigate()
+  const [user, setUser] = useState(null)
 
   const {
     projects, fetching, error, setError,
@@ -24,12 +21,30 @@ export default function Dashboard() {
   } = useProjects()
 
   // Modal visibility
-  const [showNewModal,   setShowNewModal]   = useState(false)
-  const [deleteTarget,   setDeleteTarget]   = useState(null)   // project to delete
+  const [showNewModal,     setShowNewModal]     = useState(false)
+  const [showAccessModal,  setShowAccessModal]  = useState(false)
+  const [deleteTarget,     setDeleteTarget]     = useState(null)
 
   // Sandbox launch overlay
   const [launching,  setLaunching]  = useState(false)
   const [launchMsg,  setLaunchMsg]  = useState('')
+
+  useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => setUser(data))
+      .catch(() => setUser(null))
+  }, [])
+
+  const isUnlimited = user && (user.plan === 'unlimited' || user.email?.toLowerCase().trim() === 'harshpatelpc20051@gmail.com')
+
+  const handleNewProjectClick = () => {
+    if (user && !isUnlimited) {
+      setShowAccessModal(true)
+    } else {
+      setShowNewModal(true)
+    }
+  }
 
   // ── Open sandbox ────────────────────────────────────────────────────────────
 
@@ -38,7 +53,6 @@ export default function Dashboard() {
     setLaunchMsg(`Starting sandbox for "${project.title}"…`)
 
     try {
-      // startSandbox now polls /status internally and calls onProgress with real updates
       const { sandboxid, preview } = await startSandbox(project._id, setLaunchMsg)
 
       setLaunchMsg('Sandbox ready. Launching IDE…')
@@ -46,14 +60,18 @@ export default function Dashboard() {
       navigate(`/workspace/${sandboxid}`, { state: { previewUrl: preview, projectId: project._id } })
     } catch (err) {
       setLaunching(false)
-      setError(err.message)
+      if (err.requiresApplication) {
+        setShowAccessModal(true)
+      } else {
+        setError(err.message)
+      }
     }
   }
 
   // ── Delete ──────────────────────────────────────────────────────────────────
 
   async function handleDeleteConfirm() {
-    await deleteProject(deleteTarget._id)   // throws on error → caught by DeleteModal
+    await deleteProject(deleteTarget._id)
   }
 
   // ── Render ──────────────────────────────────────────────────────────────────
@@ -65,7 +83,7 @@ export default function Dashboard() {
       <div className="dash-bg-grid" aria-hidden="true" />
       <div className="dash-bg-glow" aria-hidden="true" />
 
-      <DashHeader onNewProject={() => setShowNewModal(true)} />
+      <DashHeader onNewProject={handleNewProjectClick} />
 
       <main className="dash-main">
         <div className="dash-title-row">
@@ -87,14 +105,25 @@ export default function Dashboard() {
           fetching={fetching}
           onOpen={handleOpen}
           onDelete={setDeleteTarget}
-          onNewProject={() => setShowNewModal(true)}
+          onNewProject={handleNewProjectClick}
         />
       </main>
 
       {showNewModal && (
         <NewProjectModal
           onClose={() => setShowNewModal(false)}
-          onCreate={createProject}
+          onCreate={async (title) => {
+            try {
+              await createProject(title)
+            } catch (err) {
+              if (err.requiresApplication) {
+                setShowNewModal(false)
+                setShowAccessModal(true)
+              } else {
+                throw err
+              }
+            }
+          }}
         />
       )}
 
@@ -105,6 +134,12 @@ export default function Dashboard() {
           onConfirm={handleDeleteConfirm}
         />
       )}
+
+      {/* Restricted Cloud Access Popup */}
+      <ApplyAccessModal
+        isOpen={showAccessModal}
+        onClose={() => setShowAccessModal(false)}
+      />
     </div>
   )
 }

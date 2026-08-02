@@ -5,6 +5,7 @@ import { v7 as uuid } from 'uuid'
 import { createsandboxkey, createprojectkey, getactivesandbox, refreshTTL } from '../config/redis.js'
 import { authMiddleware } from "../middleware/auth.middleware.js";
 import Project from "../models/project.model.js";
+import User from "../models/user.model.js";
 import { k8sCoreV1Api } from '../kubernetes/config.js'
 import {
     S3Client,
@@ -54,6 +55,19 @@ async function deleteProjectS3Files(projectid) {
     console.log(`[S3] Deleted ${keys.length} object(s) for project ${projectid}`)
 }
 
+const ADMIN_EMAIL = 'harshpatelpc20051@gmail.com'
+
+async function checkUnlimitedAccess(userId) {
+    try {
+        const user = await User.findById(userId)
+        if (!user) return false
+        const isAdmin = user.email && user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()
+        return user.plan === 'unlimited' || isAdmin
+    } catch {
+        return false
+    }
+}
+
 // ─── Routes ──────────────────────────────────────────────────────────────────
 
 // Create a new project (metadata only, no pod)
@@ -61,6 +75,14 @@ router.post('/project', authMiddleware, async (req, res) => {
     const { title } = req.body
 
     if (!title) return res.status(400).json({ message: 'Title is required' })
+
+    const isUnlimited = await checkUnlimitedAccess(req.user.id)
+    if (!isUnlimited) {
+        return res.status(403).json({
+            message: 'Cloud access restricted. Please apply for early access.',
+            requiresApplication: true
+        })
+    }
 
     const project = await Project.create({ title, user: req.user.id })
     return res.status(201).json({ message: 'Project created successfully', project })
@@ -74,11 +96,6 @@ router.get('/projects', authMiddleware, async (req, res) => {
 
 /**
  * Start (or resume) a sandbox pod for a project.
- *
- * Logic:
- *   1. Check Redis: does this project already have a live pod?
- *      → YES: return the existing sandboxid (pod is already running)
- *      → NO:  create a new pod, store mappings in Redis
  */
 router.post('/start', authMiddleware, async (req, res) => {
     const { projectid } = req.body
@@ -87,6 +104,14 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     const project = await Project.findOne({ _id: projectid, user: req.user.id })
     if (!project) return res.status(404).json({ message: 'Project not found' })
+
+    const isUnlimited = await checkUnlimitedAccess(req.user.id)
+    if (!isUnlimited) {
+        return res.status(403).json({
+            message: 'Cloud access restricted. Please apply for early access.',
+            requiresApplication: true
+        })
+    }
 
     // ── Resume: pod already running for this project ──
     const existingSandboxid = await getactivesandbox(projectid)

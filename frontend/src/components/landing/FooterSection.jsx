@@ -36,7 +36,7 @@ export default function FooterSection({ onOpenAuth }) {
           <a href="#pricing" className="footer-link">Pricing Plans</a>
           <a href="#demo" className="footer-link">IDE Documentation</a>
           <span onClick={onOpenAuth} className="footer-link cursor-pointer">Sign In / Register</span>
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="footer-link">GitHub Repository</a>
+          <a href="https://github.com/Notanormaldev/INKz" target="_blank" rel="noreferrer" className="footer-link">GitHub Repository</a>
         </div>
 
         {/* Col 4: Legal & Contact */}

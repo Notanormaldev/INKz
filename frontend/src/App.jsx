@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Workspace from './pages/Workspace'
 import FreePlan from './pages/FreePlan'
 import ApplyCloud from './pages/ApplyCloud'
+import Admin from './pages/Admin'
 
 export default function App() {
   return (
@@ -14,11 +15,8 @@ export default function App() {
         <Route path="/workspace/:sandboxId" element={<Workspace />} />
         <Route path="/free" element={<FreePlan />} />
         <Route path="/apply" element={<ApplyCloud />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   )
 }
-
-
-
-

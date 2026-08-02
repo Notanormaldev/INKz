@@ -71,7 +71,11 @@ export function useProjects() {
       body:        JSON.stringify({ title: title.trim() }),
     })
     const data = await res.json()
-    if (!res.ok) throw new Error(data.message || 'Failed to create project')
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to create project')
+      err.requiresApplication = data.requiresApplication || res.status === 403
+      throw err
+    }
     setProjects(prev => [data.project, ...prev])
     return data.project
   }, [])
@@ -100,7 +104,11 @@ export function useProjects() {
       body:        JSON.stringify({ projectid: projectId }),
     })
     const data = await res.json()
-    if (!res.ok) throw new Error(data.message || 'Failed to start sandbox')
+    if (!res.ok) {
+      const err = new Error(data.message || 'Failed to start sandbox')
+      err.requiresApplication = data.requiresApplication || res.status === 403
+      throw err
+    }
 
     // 2. If the pod was already running, it's immediately ready
     if (data.message === 'Sandbox already running') {

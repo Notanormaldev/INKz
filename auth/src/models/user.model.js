@@ -1,27 +1,62 @@
 import mongoose from "mongoose";
 
-
 const userSchema = new mongoose.Schema({
-    googleId:{
-        type:String,
-        required:true,
-        unique:true
+    googleId: {
+        type: String,
+        required: true,
+        unique: true
     },
-    name:{
-        type:String,
-        required:true
+    name: {
+        type: String,
+        required: true
     },
-    email:{
-        type:String,
-        required:true,
-        unique:true
+    email: {
+        type: String,
+        required: true,
+        unique: true
     },
-    avatar:{
-        type:String,
+    avatar: {
+        type: String,
     },
-    
-},{timestamps:true})
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
+    plan: {
+        type: String,
+        enum: ['free', 'unlimited'],
+        default: 'free'
+    }
+}, { timestamps: true });
 
-const User=new mongoose.model("User",userSchema)
+const applicationSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
+    github: {
+        type: String
+    },
+    experience: {
+        type: String
+    },
+    usecase: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending'
+    }
+}, { timestamps: true });
 
-export default User
+export const User = mongoose.models.User || mongoose.model("User", userSchema);
+export const Application = mongoose.models.Application || mongoose.model("Application", applicationSchema);
+
+export default User;
