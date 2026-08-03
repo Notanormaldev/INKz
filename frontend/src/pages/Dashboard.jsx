@@ -36,9 +36,19 @@ export default function Dashboard() {
       .catch(() => setUser(null))
   }, [])
 
-  const isUnlimited = !user || user.role === 'admin' || user.plan === 'unlimited' || user.email?.toLowerCase().trim() === 'harshpatelpc20051@gmail.com' || Boolean(user.id || user._id)
+  const isUnlimited = Boolean(
+    user && (
+      user.role === 'admin' ||
+      user.plan === 'unlimited' ||
+      user.email?.toLowerCase().trim() === 'harshpatelpc20051@gmail.com'
+    )
+  )
 
   const handleNewProjectClick = () => {
+    if (!isUnlimited) {
+      setShowAccessModal(true)
+      return
+    }
     setShowNewModal(true)
   }
 

@@ -71,6 +71,14 @@ io.on('connection', (socket) => {
     // Trigger prompt output for newly connected user
     ptyProcess.write('\r');
 
+    // Send developer banner & GitHub star reminder
+    const banner = `\r\n\x1b[1;38;5;208m─────────────────────────────────────────────────────────────\x1b[0m\r\n` +
+      `\x1b[1;97m   INKz Sandbox — Created & Engineered by \x1b[1;38;5;208mHarsh Patel\x1b[0m\r\n` +
+      `\x1b[1;36m   GitHub: https://github.com/Notanormaldev/INKz\x1b[0m\r\n` +
+      `\x1b[1;33m  💡 Don't forget to star the repository!\x1b[0m\r\n` +
+      `\x1b[1;38;5;208m─────────────────────────────────────────────────────────────\x1b[0m\r\n\r\n`;
+    socket.emit('terminal-output', banner);
+
     socket.on("terminal-input", (data) => {
         ptyProcess.write(data);
     });

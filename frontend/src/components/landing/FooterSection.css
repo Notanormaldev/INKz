@@ -123,6 +123,7 @@
   .footer-top-grid {
     grid-template-columns: 1fr;
   }
+
   .footer-bottom-bar {
     flex-direction: column;
     gap: 1rem;

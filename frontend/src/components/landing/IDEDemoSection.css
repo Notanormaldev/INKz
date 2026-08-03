@@ -227,8 +227,83 @@
   color: #f97316;
 }
 
+/* Mobile Responsiveness Improvements */
 @media (max-width: 900px) {
+  .demo-section-container {
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  .ide-top-bar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .window-title {
+    font-size: 0.72rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+
+  .k8s-pod-badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .ide-main-split {
     grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .ide-file-tree {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .ide-file-tree::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  .tree-header {
+    padding: 0 0.5rem 0 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.12);
+    margin-right: 4px;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+
+  .tree-item {
+    margin-bottom: 0;
+    white-space: nowrap;
+    font-size: 0.76rem;
+    padding: 4px 10px;
+    flex-shrink: 0;
+  }
+
+  .editor-code-view {
+    padding: 0.85rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .ide-preview-ai-panel {
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .window-title {
+    max-width: 110px;
   }
 }

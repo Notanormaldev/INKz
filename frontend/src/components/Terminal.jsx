@@ -91,7 +91,12 @@ export default function Terminal({ sandboxId, podReady }) {
         if (reconnectAttemptsRef.current > 0) {
           term.writeln('\r\x1b[32m── reconnected ──\x1b[0m\r')
         } else {
-          term.writeln('\r\x1b[2m── connected to sandbox terminal ──\x1b[0m\r')
+          term.writeln('\r\x1b[1;38;5;208m─────────────────────────────────────────────────────────────\x1b[0m')
+          term.writeln('\x1b[1;97m   INKz Cloud IDE — Created & Engineered by \x1b[1;38;5;208mHarsh Patel\x1b[0m')
+          term.writeln('\x1b[1;36m   GitHub: https://github.com/Notanormaldev/INKz\x1b[0m')
+          term.writeln('\x1b[1;33m  💡 Don\'t forget to star the repository!\x1b[0m')
+          term.writeln('\x1b[1;38;5;208m─────────────────────────────────────────────────────────────\x1b[0m')
+          term.writeln('\r\x1b[2m── connected to sandbox terminal ──\x1b[0m\r\n')
         }
       })
 

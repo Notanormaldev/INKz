@@ -33,12 +33,12 @@ const BUCKET = 'inkz-s3'
  */
 async function deleteProjectS3Files(projectid) {
     const keys = []
-    let token  = undefined
+    let token = undefined
 
     do {
         const res = await s3.send(new ListObjectsV2Command({
-            Bucket:            BUCKET,
-            Prefix:            `${projectid}/`,
+            Bucket: BUCKET,
+            Prefix: `${projectid}/`,
             ContinuationToken: token
         }))
         if (res.Contents) keys.push(...res.Contents.map(o => ({ Key: o.Key })))
@@ -48,8 +48,8 @@ async function deleteProjectS3Files(projectid) {
     if (keys.length === 0) return
 
     await s3.send(new DeleteObjectsCommand({
-        Bucket:  BUCKET,
-        Delete:  { Objects: keys }
+        Bucket: BUCKET,
+        Delete: { Objects: keys }
     }))
 
     console.log(`[S3] Deleted ${keys.length} object(s) for project ${projectid}`)
@@ -61,32 +61,34 @@ async function checkUnlimitedAccess(reqUser) {
     if (!reqUser) return false
 
     const email = (reqUser.email || '').toLowerCase().trim()
-    const isAdminEmail = email === ADMIN_EMAIL.toLowerCase().trim()
+    const isAdminEmail = Boolean(email && email === ADMIN_EMAIL.toLowerCase().trim())
 
     // 1. Direct JWT token claim check
     if (reqUser.role === 'admin' || reqUser.plan === 'unlimited' || isAdminEmail) {
         return true
     }
 
-    // 2. DB fallback check if user exists in sandbox DB
+    // 2. DB fallback check if user plan was updated to 'unlimited' in DB or user is admin
     try {
         const userId = reqUser.id || reqUser._id
+        let user = null
         if (userId) {
-            const user = await User.findById(userId)
-            if (user) {
-                const isAdmin = user.role === 'admin' || (user.email && user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim())
-                if (user.plan === 'unlimited' || isAdmin) return true
+            user = await User.findById(userId)
+        } else if (email) {
+            user = await User.findOne({ email: new RegExp(`^${email}$`, 'i') })
+        }
+
+        if (user) {
+            const isUserAdmin = user.role === 'admin' || (user.email && user.email.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim())
+            if (user.plan === 'unlimited' || isUserAdmin) {
+                return true
             }
         }
     } catch (err) {
-        console.error('[checkUnlimitedAccess error]', err)
+        console.error('[checkUnlimitedAccess DB check error]', err)
     }
 
-    // 3. Fallback for any authenticated user with a valid JWT token ID
-    if (reqUser.id || reqUser._id) {
-        return true
-    }
-
+    // Free plan users cannot create projects or start sandboxes (return false -> 403 Forbidden)
     return false
 }
 
@@ -140,9 +142,9 @@ router.post('/start', authMiddleware, async (req, res) => {
     if (existingSandboxid) {
         console.log(`[START] Resuming existing pod for project ${projectid}: ${existingSandboxid}`)
         return res.status(200).json({
-            message:   'Sandbox already running',
+            message: 'Sandbox already running',
             sandboxid: existingSandboxid,
-            preview:   `http://${existingSandboxid}.preview.localhost`
+            preview: `http://${existingSandboxid}.preview.localhost`
         })
     }
 
@@ -157,9 +159,9 @@ router.post('/start', authMiddleware, async (req, res) => {
 
     console.log(`[START] New pod for project ${projectid}: ${sandboxid}`)
     return res.status(201).json({
-        message:   'Sandbox created successfully',
+        message: 'Sandbox created successfully',
         sandboxid: sandboxid,
-        preview:   `http://${sandboxid}.preview.localhost`
+        preview: `http://${sandboxid}.preview.localhost`
     })
 
 })
@@ -190,26 +192,26 @@ router.get('/status/:projectid', authMiddleware, async (req, res) => {
     // Check actual pod state in Kubernetes
     try {
         const pod = await k8sCoreV1Api.readNamespacedPod({
-            name:      `sandbox-pod-${sandboxid}`,
+            name: `sandbox-pod-${sandboxid}`,
             namespace: 'default'
         })
 
-        const phase      = pod.status?.phase           // Pending / Running / Failed
+        const phase = pod.status?.phase           // Pending / Running / Failed
         const conditions = pod.status?.conditions || []
-        const allReady   = pod.status?.containerStatuses?.every(c => c.ready) ?? false
+        const allReady = pod.status?.containerStatuses?.every(c => c.ready) ?? false
 
         if (phase === 'Running' && allReady) {
             return res.status(200).json({
-                status:    'ready',
+                status: 'ready',
                 sandboxid,
-                preview:   `http://${sandboxid}.preview.localhost`
+                preview: `http://${sandboxid}.preview.localhost`
             })
         }
 
         return res.status(200).json({
-            status:    'starting',
+            status: 'starting',
             sandboxid,
-            preview:   null,
+            preview: null,
             phase
         })
     } catch (err) {

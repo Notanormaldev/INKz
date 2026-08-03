@@ -22,16 +22,15 @@ export default function ApplyAccessModal({ isOpen, onClose }) {
           EARLY ACCESS REQUIRED
         </div>
 
-        <h3 className="access-modal-title">Cloud Access Restricted</h3>
+        <h3 className="access-modal-title">New Project Access Restricted</h3>
 
         <p className="access-modal-text">
-          Creating projects and running Kubernetes sandboxes is currently restricted to{' '}
-          <strong>approved Early Access users</strong>.
+          You cannot create a new project on the <strong>Free Plan</strong>. Creating new projects & launching Kubernetes sandboxes is reserved for <strong>approved Early Access users</strong>.
         </p>
 
         <div className="access-modal-box">
           <p>
-            Fill out a short application form to get <strong>100% free unlimited cloud access</strong> (managed Kubernetes pods, S3 storage, & AI coding partner).
+            If you want access to create projects, you can apply for it! Get <strong>100% free access</strong> to managed Kubernetes pods, S3 file persistence & AI coding partner.
           </p>
         </div>
 
