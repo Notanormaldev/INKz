@@ -1,0 +1,184 @@
+/* Big INKz Logo Footer - Elevated Left Text & Accent Line */
+.big-inkz-footer-wrapper {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  min-height: 220px;
+  padding: 2.5rem 1.5rem 2.5rem;
+  background: #040406;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Vertically centered */
+  gap: 3rem;
+  position: relative;
+  user-select: none;
+  border-top: none;
+}
+
+/* Left Side Branding Text Block */
+.footer-left-brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+  max-width: 500px;
+  align-self: center;
+}
+
+.motto-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.left-accent-line {
+  width: 4px;
+  height: 24px;
+  background: linear-gradient(180deg, #ff944d 0%, #f97316 100%);
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.left-brand-motto {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  line-height: 1.2;
+  color: #f4f4f5;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.motto-accent {
+  color: #f97316;
+  background: linear-gradient(180deg, #ff944d 0%, #f97316 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.left-brand-sub {
+  font-size: 0.88rem;
+  color: #a1a1aa;
+  line-height: 1.55;
+  margin: 0;
+  white-space: normal; /* Wraps naturally to next line, no ... truncation */
+  max-width: 480px;
+}
+
+/* Right Side: INKz Logo Container */
+.big-inkz-logo-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  width: auto;
+  padding: 0.5rem 0;
+}
+
+/* Typography Text Wrapper */
+.big-logo-text-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: -0.01em;
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+  font-weight: 900;
+  font-size: clamp(3.5rem, 10vw, 9.5rem);
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+.big-logo-letter-box {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Stylized italic lower 'z' */
+.big-logo-letter-box.is-italic-z {
+  font-style: italic;
+  text-transform: lowercase;
+  letter-spacing: -0.03em;
+  margin-left: -0.02em;
+}
+
+/* Outlined Stroke Layer (Dark & Subtle) */
+.letter-stroke {
+  position: relative;
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.18);
+  transition: -webkit-text-stroke 0.3s ease;
+}
+
+.big-logo-letter-box.letter-active .letter-stroke {
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.45);
+}
+
+/* Inner Dull Burnt Copper Fill Layer - ONLY visible when cursor is hovering directly over THIS letter */
+.letter-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  background: linear-gradient(180deg, #85370e 0%, #592308 55%, #361404 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0;
+
+  /* Radial spotlight mask centered at letter mouse position */
+  -webkit-mask-image: radial-gradient(circle 70px at var(--letter-mouse-x, 50%) var(--letter-mouse-y, 50%), rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0) 100%);
+  mask-image: radial-gradient(circle 70px at var(--letter-mouse-x, 50%) var(--letter-mouse-y, 50%), rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0) 100%);
+
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+/* Color spotlight turns ON strictly when hovering this letter */
+.big-logo-letter-box.letter-active .letter-fill {
+  opacity: 1;
+}
+
+/* Right-aligned Sub-Tagline */
+.big-logo-sub-tagline {
+  position: relative;
+  z-index: 1;
+  margin-top: 1rem;
+  font-family: var(--mono), ui-monospace, monospace;
+  font-size: clamp(0.68rem, 1vw, 0.9rem);
+  letter-spacing: 0.35em;
+  color: #52525b;
+  text-transform: uppercase;
+  text-align: right;
+  transition: color 0.4s ease;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .big-inkz-footer-wrapper {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2.5rem;
+  }
+  .footer-left-brand-block {
+    align-items: center;
+    text-align: center;
+  }
+  .big-inkz-logo-container {
+    align-items: center;
+  }
+  .big-logo-text-wrapper {
+    justify-content: center;
+    font-size: clamp(3rem, 14vw, 6rem);
+  }
+  .big-logo-sub-tagline {
+    text-align: center;
+  }
+}

@@ -138,7 +138,7 @@ export default function FreePlan() {
             <ul className="free-info-list">
               <li>Unlimited Kubernetes pods (on your own cluster)</li>
               <li>Unlimited S3/local file storage</li>
-              <li>Full AI coding partner (bring your own Mistral API key)</li>
+              <li>Full AI coding partner (Ollama, Open WebUI & Local LLMs)</li>
               <li>Monaco Editor + HMR dev server</li>
               <li>Zero cost, zero account required</li>
             </ul>

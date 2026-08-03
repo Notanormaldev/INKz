@@ -99,8 +99,8 @@
 }
 
 .footer-bottom-bar {
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  padding-top: 2rem;
+  border-top: none;
+  padding-top: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;

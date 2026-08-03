@@ -1,3 +1,4 @@
+import BigInkzLogoFooter from './BigInkzLogoFooter'
 import './FooterSection.css'
 
 export default function FooterSection({ onOpenAuth }) {
@@ -52,6 +53,8 @@ export default function FooterSection({ onOpenAuth }) {
         <span>© 2026 INKz Cloud Systems. All rights reserved.</span>
         <span className="footer-tagline">YOUR CODE. YOUR CANVAS.</span>
       </div>
+
+      <BigInkzLogoFooter />
     </footer>
   )
 }
