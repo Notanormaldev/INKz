@@ -13,7 +13,7 @@ export default function App() {
 
   return (
     <div className="container">
-      <h1>🚀 INKz Live App Preview</h1>
+      <h1>INKz Live App Preview</h1>
       <button onClick={() => setCounter(c => c + 1)}>
         Count is: {counter}
       </button>
@@ -105,14 +105,14 @@ app.listen(5173, () => console.log('Pod listening on port 5173'))`,
                 <span>Live Preview (Port 5173)</span>
               </div>
               <div className="preview-mock-screen">
-                <h3>🚀 INKz Live App Preview</h3>
+                <h3>INKz Live App Preview</h3>
                 <button className="preview-mock-btn">Count is: 42</button>
               </div>
             </div>
 
             {/* AI Assistant Chat */}
             <div className="ai-chat-box">
-              <div className="ai-chat-head">🤖 INKz AI Partner</div>
+              <div className="ai-chat-head">INKz AI Partner</div>
               <div className="ai-chat-msg">
                 <span className="ai-role">AI:</span> Refactored state management & attached S3 persistence mirror.
               </div>

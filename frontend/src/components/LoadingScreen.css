@@ -1,34 +1,75 @@
+/* INKz Loader Screen Styling */
 .inkz-loading-screen {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background-color: #0a0a0a;
+  background-color: #060608;
   display: flex;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
 
 .loading-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(249, 115, 22, 0.1);
+/* Official INKz Logo Styling */
+.loading-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-inkz-logo {
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  font-weight: 900;
+  font-size: 52px;
+  letter-spacing: -2.5px;
+  color: #ffffff;
+  display: flex;
+  align-items: baseline;
+  filter: drop-shadow(0 0 25px rgba(249, 115, 22, 0.5));
+  animation: logoPulse 2.2s infinite ease-in-out;
+}
+
+.loading-inkz-logo .logo-z {
+  color: #f97316;
+  font-style: italic;
+  font-size: 1.1em;
+  letter-spacing: -1.5px;
+}
+
+@keyframes logoPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 25px rgba(249, 115, 22, 0.4));
+  }
+  50% {
+    transform: scale(1.04);
+    filter: drop-shadow(0 0 35px rgba(249, 115, 22, 0.75));
+  }
+}
+
+.loading-spinner-ring {
+  width: 42px;
+  height: 42px;
+  border: 3px solid rgba(249, 115, 22, 0.15);
   border-top-color: #f97316;
+  border-right-color: rgba(249, 115, 22, 0.5);
   border-radius: 50%;
-  animation: loading-spin 1s infinite linear;
+  animation: loading-spin 0.9s infinite linear;
 }
 
 .loading-message {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
-  color: #ffffff;
+  font-family: var(--mono, ui-monospace, 'JetBrains Mono', monospace);
+  font-size: 0.88rem;
+  color: #a1a1aa;
   letter-spacing: 1px;
+  margin: 0;
 }
 
 @keyframes loading-spin {
