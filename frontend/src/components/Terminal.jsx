@@ -68,7 +68,7 @@ export default function Terminal({ sandboxId, podReady }) {
     if (!sandboxId || !podReady) {
       term.writeln('\r\x1b[33m── Waiting for sandbox to be ready… ──\x1b[0m\r')
       const resizeObserver = new ResizeObserver(() => {
-        try { fitAddon.fit() } catch {}
+        try { fitAddon.fit() } catch { }
       })
       resizeObserver.observe(containerRef.current)
       return () => {
@@ -123,7 +123,7 @@ export default function Terminal({ sandboxId, podReady }) {
 
     // Resize handler
     const resizeObserver = new ResizeObserver(() => {
-      try { fitAddon.fit() } catch {}
+      try { fitAddon.fit() } catch { }
     })
     resizeObserver.observe(containerRef.current)
 

@@ -28,9 +28,18 @@
   height: 10px;
   border-radius: 50%;
 }
-.dot.red    { background: #ff5f57; }
-.dot.yellow { background: #febc2e; }
-.dot.green  { background: #28c840; }
+
+.dot.red {
+  background: #ff5f57;
+}
+
+.dot.yellow {
+  background: #febc2e;
+}
+
+.dot.green {
+  background: #28c840;
+}
 
 .terminal-title {
   font-size: 12px;

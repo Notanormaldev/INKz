@@ -84,9 +84,12 @@ subscriber.on('message', async (channel, key) => {
     console.log(`[REDIS] Sandbox expired: ${key}`)
     const sandboxid = key.split(':')[1]
 
-    await deletepod(sandboxid)
-    await deleteservice(sandboxid)
+    try {
+        await deletepod(sandboxid)
+        await deleteservice(sandboxid)
+    } catch (err) {
+        console.error(`[REDIS] Error handling expired sandbox ${sandboxid}:`, err?.message || err)
+    }
 })
 
 export default { subscriber }
-

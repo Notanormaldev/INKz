@@ -1,4 +1,4 @@
-/* Big INKz Logo Footer - Elevated Left Text & Accent Line */
+/* Big INKz Logo Footer - Elevated Left Text & Creator POW Badge */
 .big-inkz-footer-wrapper {
   width: 100%;
   max-width: 1300px;
@@ -8,7 +8,7 @@
   background: #040406;
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Vertically centered */
+  align-items: center;
   gap: 3rem;
   position: relative;
   user-select: none;
@@ -21,7 +21,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 0.65rem;
-  max-width: 500px;
+  max-width: 520px;
   align-self: center;
 }
 
@@ -61,8 +61,73 @@
   color: #a1a1aa;
   line-height: 1.55;
   margin: 0;
-  white-space: normal; /* Wraps naturally to next line, no ... truncation */
+  white-space: normal;
   max-width: 480px;
+}
+
+/* Creator Proof of Work Card */
+.creator-pow-box {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 16px;
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+}
+
+.pow-label {
+  font-family: var(--mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 1.5px;
+  color: #71717a;
+  text-transform: uppercase;
+}
+
+.pow-user-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pow-name {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #f4f4f5;
+  letter-spacing: -0.01em;
+}
+
+.pow-social-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pow-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a1a1aa;
+  transition: all 0.25s ease;
+}
+
+.pow-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+.pow-link:hover {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: #f97316;
+  color: #ffffff;
+  transform: translateY(-2px);
 }
 
 /* Right Side: INKz Logo Container */

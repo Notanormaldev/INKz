@@ -1,10 +1,7 @@
 import { V1Volume } from "@kubernetes/client-node";
 import { k8sCoreV1Api } from "./config.js";
 
-
-
 export async function createpod(sandboxid,projectid){
-
     const podManifest={
         apiVersion:"v1",
         kind:"Pod",
@@ -29,8 +26,6 @@ export async function createpod(sandboxid,projectid){
                     name:"workspace-volume",
                     mountPath:"/seed"
                 }]
-                
-
             }
          ],
             containers:[{
@@ -71,7 +66,6 @@ export async function createpod(sandboxid,projectid){
                     name:"workspace-volume",
                     mountPath:"/workspace"
                 }]
-
             },
         {
            name:"sync-agent",
@@ -126,8 +120,6 @@ export async function createpod(sandboxid,projectid){
            ]
         }]
         }
-        
-        
     }
     
     const res= await k8sCoreV1Api.createNamespacedPod({
@@ -137,14 +129,22 @@ export async function createpod(sandboxid,projectid){
 
     return res
 }
+
 export async function deletepod(sandboxid){
-   const res = await k8sCoreV1Api.deleteNamespacedPod({
-        namespace:"default",
-        name:`sandbox-pod-${sandboxid}`
-    },{
-        gracePeriodSeconds:0
-    })
-    return res ;
+    try {
+        const res = await k8sCoreV1Api.deleteNamespacedPod({
+            namespace:"default",
+            name:`sandbox-pod-${sandboxid}`
+        },{
+            gracePeriodSeconds:0
+        })
+        return res;
+    } catch (err) {
+        if (err?.code === 404 || err?.statusCode === 404 || (typeof err?.body === 'string' && err?.body?.includes('NotFound'))) {
+            console.log(`[K8S] Pod sandbox-pod-${sandboxid} already deleted or not found.`);
+            return null;
+        }
+        console.error(`[K8S] Error deleting pod sandbox-pod-${sandboxid}:`, err?.message || err);
+        return null;
+    }
 }
-
-

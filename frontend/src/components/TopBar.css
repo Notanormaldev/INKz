@@ -33,7 +33,10 @@
   gap: 0;
   transition: opacity 0.15s;
 }
-.topbar-logo:hover { opacity: 0.8; }
+
+.topbar-logo:hover {
+  opacity: 0.8;
+}
 
 .topbar-ink {
   color: var(--text-primary);
@@ -105,6 +108,7 @@
   transform: rotate(90deg);
   transition: transform 0.15s;
 }
+
 .topbar-project-chevron.open {
   transform: rotate(-90deg);
 }
