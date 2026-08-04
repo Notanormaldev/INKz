@@ -374,9 +374,9 @@ Add `OPENAI_API_KEY` to the `ai-secret` in `secret.yml`.
 
 ---
 
-## 10. File Storage: AWS S3 vs Local Disk
+## 10. File Storage: AWS S3 vs Local Storage (MinIO / hostPath)
 
-### Option A: AWS S3
+### Option A: AWS S3 (Cloud)
 
 1. Go to AWS Console → S3 → Create bucket named `inkz-s3` in `ap-south-1`
 2. Go to IAM → Create user → Attach policy `AmazonS3FullAccess`
@@ -388,13 +388,54 @@ Add `OPENAI_API_KEY` to the `ai-secret` in `secret.yml`.
    AWS_SECRET_ACCESS_KEY: your_secret_access_key
    ```
 
-### Option B: No AWS (Skip S3)
+### Option B: MinIO (Free & Self-Hosted S3 Replacement - Recommended)
 
-If the `aws` secret keys are empty or missing, the `sync-agent` will fail to start (it throws an error if `AWS_ACCESS_KEY_ID` is not set).
+[MinIO](https://min.io/) is a 100% free, open-source, S3-compatible local object store. It allows running `sync-agent` without an AWS account or S3 bucket.
 
-**To disable S3 sync and use local storage:** You must modify `sync-agent/sync.js` to write to a mounted persistent volume instead of S3, OR simply not include the `sync-agent` container in `pod.js`.
+1. **Run MinIO container locally:**
+   ```bash
+   docker run -d -p 9000:9000 -p 9001:9001 \
+     -e MINIO_ROOT_USER=minioadmin \
+     -e MINIO_ROOT_PASSWORD=minioadmin \
+     quay.io/minio/minio server /data --console-address ':9001'
+   ```
+2. **Access Web Console:** Open `http://localhost:9001` (user: `minioadmin`, pass: `minioadmin`) and create a bucket named `inkz-s3`.
+3. **Set Secrets in `k8s/secret.yml`:**
+   ```yaml
+   AWS_REGION:            "us-east-1"
+   AWS_ACCESS_KEY_ID:     "minioadmin"
+   AWS_SECRET_ACCESS_KEY: "minioadmin"
+   S3_ENDPOINT:           "http://host.docker.internal:9000"
+   ```
+4. **Update `sandbox/sync-agent/sync.js`:** Pass `endpoint` to `S3Client`:
+   ```js
+   const client = new S3Client({
+     region: process.env.AWS_REGION,
+     endpoint: process.env.S3_ENDPOINT,
+     forcePathStyle: true,
+     credentials: {
+       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+     }
+   })
+   ```
 
-For pure local development where you don't care about workspace persistence between pod restarts, you can remove the `sync-agent` container block from `sandbox/server/src/kubernetes/pod.js` and remove the `aws` secret from the `sync-agent` env section.
+### Option C: `hostPath` Volume (No S3 / No MinIO)
+
+If you don't want any object store at all, mount a local host directory into the sandbox pod spec in `sandbox/server/src/pod.js`:
+
+```js
+volumes: [
+  {
+    name: 'workspace-volume',
+    hostPath: {
+      path: `/data/inkz-workspaces/${projectid}`,
+      type: 'DirectoryOrCreate'
+    }
+  }
+]
+```
+Then remove the `sync-agent` container from `pod.js` and `skaffold.yml`.
 
 ---
 

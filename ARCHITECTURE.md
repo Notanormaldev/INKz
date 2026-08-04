@@ -23,6 +23,7 @@ This document is the single source of truth for how every component is architect
 13. [Skaffold: Local vs AWS EKS Deployment](#13-skaffold-local-vs-aws-eks-deployment)
 14. [Data Store Reference](#14-data-store-reference)
 15. [Security Model](#15-security-model)
+16. [Self-Hosted / Local Mode (No AWS Required)](#16-self-hosted--local-mode-no-aws-required)
 
 ---
 
@@ -611,6 +612,220 @@ For `auth`, `ai-orchestration`, `notification`, and `router`, Skaffold `sync.inf
 | S3 prefix isolation | `<project-id>/` prefix per project | One project cannot list or access another project's files |
 | NGINX ingress path routing | Only explicitly defined paths and hosts are routed | Services are not directly accessible; only via the ingress |
 | NGINX session timeouts | 6000s proxy timeouts | Long-running WS and AI streams complete without forced disconnection |
+
+---
+
+## 16. Self-Hosted / Local Mode (No AWS Required)
+
+You don't need AWS to run INKz. Below is a complete guide to running everything on your **local machine or a bare-metal server** — replacing every managed cloud dependency with a local equivalent.
+
+### 16.1 Overview: What to Replace / Skip
+
+| Cloud Service | Local Replacement | Can Skip? |
+|---|---|---|
+| AWS S3 (`inkz-s3`) | Local disk volume (`hostPath` or PVC) | ❌ Must replace |
+| Redis Cloud | `redis` Docker container / K8s pod | ❌ Must replace |
+| MongoDB Atlas (×3) | `mongo` Docker container / K8s pod | ❌ Must replace |
+| CloudAMQP (RabbitMQ) | `rabbitmq` Docker container / K8s pod | ✅ Skip if skipping notifications |
+| Brevo Email API | — | ✅ Skip entirely |
+| Auth Service (Google OAuth) | — | ✅ Skip for local-only dev |
+| Notification Service | — | ✅ Skip entirely |
+
+---
+
+### 16.2 Replace AWS S3 with Local Disk
+
+The `sync-agent` uses the AWS SDK (`@aws-sdk/client-s3`). To swap it for local disk, **no Kubernetes volume sharing magic is needed** — just replace the S3 calls with `fs` calls.
+
+#### Option A: Direct `emptyDir` Persistence (Simplest)
+
+If you only care about persistence *within a single run* (i.e., pod restarts don't matter), the existing `emptyDir` shared volume already works — no changes needed.
+
+#### Option B: `hostPath` Volume (Persist Across Pod Restarts)
+
+Replace the `emptyDir` volume in `pod.js` with a `hostPath` volume pointing to a directory on your local machine:
+
+```js
+// In sandbox/server/src/pod.js — volumes section
+volumes: [
+  {
+    name: 'workspace-volume',
+    // BEFORE (cloud):  emptyDir: {}
+    // AFTER  (local):  hostPath pointing to a per-project directory
+    hostPath: {
+      path: `/data/inkz-workspaces/${projectid}`,  // host machine path
+      type: 'DirectoryOrCreate'
+    }
+  }
+]
+```
+
+> **Note:** `hostPath` only works with single-node clusters (Docker Desktop, Minikube, k3s). For multi-node clusters use a `PersistentVolumeClaim` with `local-path-provisioner`.
+
+#### Option C: Disable `sync-agent` Entirely
+
+If you use `hostPath`, the `sync-agent` container becomes redundant. Remove it from the pod spec in `pod.js`:
+
+```js
+// Remove this entry from the containers array:
+{
+  name: 'sync-agent',
+  image: 'sync-agent',
+  // ...
+}
+```
+
+Also remove the `sync-agent` build artifact from `skaffold.yml`.
+
+#### Option D: Keep `sync-agent` but Point to a Local MinIO Instance
+
+MinIO is an S3-compatible object store you can run locally. Zero code changes needed — just swap env vars:
+
+```yaml
+# In your K8s secret / .env:
+AWS_ACCESS_KEY_ID: minioadmin
+AWS_SECRET_ACCESS_KEY: minioadmin
+AWS_REGION: us-east-1          # MinIO ignores region but SDK requires it
+S3_BUCKET_NAME: inkz-s3
+# Add this to override the S3 endpoint:
+S3_ENDPOINT: http://minio-service:9000   # internal cluster DNS
+```
+
+Then patch `sync.js` to pass `endpoint` to the S3 client:
+
+```js
+// sandbox/sync-agent/sync.js
+const client = new S3Client({
+  region: process.env.AWS_REGION,
+  endpoint: process.env.S3_ENDPOINT,          // add this line
+  forcePathStyle: true,                        // required for MinIO
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  }
+})
+```
+
+Deploy MinIO via Helm or a single manifest:
+```bash
+kubectl apply -f https://raw.githubusercontent.com/minio/minio/master/docs/orchestration/kubernetes/minio-standalone.yaml
+```
+
+---
+
+### 16.3 Skip the Notification Service
+
+The `notification` service only sends login-alert emails via Brevo. It is **safe to skip entirely** in local mode.
+
+**Steps:**
+
+1. **Remove from `skaffold.yml`** — delete the `notification` entry from both `build.artifacts` and `deploy.helm.releases` (or `manifests`).
+
+2. **Remove its K8s manifest** — delete or don't apply `k8s/notification-deployment.yml` (if it exists as a separate file).
+
+3. **Comment out the publish call in `auth`** — open `auth/src/` and find where the auth service publishes to `auth_notification_queue`. Comment it out:
+
+```js
+// auth/src/routes/auth.js (approximate location)
+// -- SKIP IN LOCAL MODE: no RabbitMQ / email needed --
+// await channel.sendToQueue(
+//   'auth_notification_queue',
+//   Buffer.from(JSON.stringify({ userId, email, timestamp: new Date() }))
+// )
+```
+
+4. **Remove `AMQP_URL` from secrets** — since nothing publishes or consumes, RabbitMQ itself can also be removed from your local setup.
+
+> **Result:** Login still works. Users just don't receive an email notification. Zero other side-effects.
+
+---
+
+### 16.4 Skip the Auth Service (Fully Local Dev)
+
+For pure local development where you don't need Google OAuth or access control, you can **bypass the auth service entirely** and hardcode a user identity in the sandbox service.
+
+> ⚠️ **Never do this in production or any internet-exposed deployment.**
+
+**Steps:**
+
+1. **Remove from `skaffold.yml`** — delete the `auth` build artifact and its K8s deployment.
+
+2. **Remove the NGINX ingress rule** for `/api/auth` from `k8s/ingress.yml`.
+
+3. **Replace auth middleware in `sandbox-service`** — the sandbox service validates JWTs on every request. Replace the real middleware with a fake one that returns a hardcoded local user:
+
+```js
+// sandbox/server/src/middleware/auth.js — LOCAL OVERRIDE
+const localDevUser = {
+  id: 'local-dev-user-001',
+  email: 'dev@localhost',
+  role: 'admin',
+  plan: 'unlimited'
+}
+
+export function authenticateToken(req, res, next) {
+  // Skip JWT verification entirely in local mode
+  req.user = localDevUser
+  next()
+}
+```
+
+4. **Skip `AUTH_MONGO_URI`** — the `auth` MongoDB collection (`users`, `applications`) is no longer needed. Remove it from your secrets/env.
+
+5. **Frontend: skip the login page** — in the React frontend, set a fake token cookie or comment out the redirect-to-login guard so the app boots straight to the dashboard.
+
+#### Local Mode Environment Variables (Minimal Set)
+
+With auth + notification + AWS S3 all skipped (using MinIO or hostPath), your `.env` / K8s secrets reduce to:
+
+```env
+# Required
+SANDBOX_MONGO_URI=mongodb://localhost:27017/sandbox
+AI_MONGO_URI=mongodb://localhost:27017/ai
+REDIS_URL=redis://localhost:6379
+MISTRAL_API_KEY=<your-mistral-key>
+
+# Only if using MinIO (Option D above)
+AWS_ACCESS_KEY_ID=minioadmin
+AWS_SECRET_ACCESS_KEY=minioadmin
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=inkz-s3
+S3_ENDPOINT=http://minio-service:9000
+
+# Removed / not needed in local mode
+# AUTH_MONGO_URI      -- skipped (no auth service)
+# AMQP_URL            -- skipped (no notification service)
+# BREVO_API_KEY       -- skipped (no emails)
+# AWS_ACCESS_KEY_ID   -- skipped (no real S3)
+# AWS_SECRET_ACCESS_KEY
+```
+
+---
+
+### 16.5 Recommended Local Stack
+
+For a fully self-hosted local setup, run these alongside your K8s cluster:
+
+```bash
+# Start Redis
+docker run -d -p 6379:6379 redis:alpine
+
+# Start MongoDB (single instance, 3 logical DBs)
+docker run -d -p 27017:27017 mongo:7
+
+# Start MinIO (optional — only if using Option D)
+docker run -d -p 9000:9000 -p 9001:9001 \
+  -e MINIO_ROOT_USER=minioadmin \
+  -e MINIO_ROOT_PASSWORD=minioadmin \
+  quay.io/minio/minio server /data --console-address ':9001'
+# Then create the bucket:
+# Open http://localhost:9001 → login → create bucket 'inkz-s3'
+```
+
+Then run Skaffold as usual:
+```bash
+skaffold dev   # hot-reload local dev
+```
 
 ---
 
