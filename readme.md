@@ -41,14 +41,6 @@ This isn't a toy demo wrapped around a single API call. It's a full event-driven
 <td width="50%"><img src="frontend/public/ide2.png" width="100%"/><br/><sub><b>Live dev server preview + HMR</b></sub></td>
 <td width="50%"><img src="frontend/public/ide3.png" width="100%"/><br/><sub><b>Autonomous AI pair programmer</b></sub></td>
 </tr>
-</table>
-
-<div align="center">
-<img src="frontend/public/mbview.png" width="220"/>
-<img src="frontend/public/mbview2.png" width="220"/>
-<br/><sub><b>Mobile view</b> — the landing page and dashboard are fully responsive (the editor and AI agent are desktop-only)</sub>
-</div>
-
 ---
 
 ## The numbers
