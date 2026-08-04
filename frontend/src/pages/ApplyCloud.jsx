@@ -131,34 +131,15 @@ export default function ApplyCloud() {
       <div className="apply-page-root flex-center-root">
         <div className="apply-bg-grid" />
         <div className="apply-bg-glow" />
-        <div className="apply-logo-loader-card">
-          {/* Animated INKz Brand Logo */}
-          <div className="loader-logo-wrap">
-            <div className="loader-logo-ring" />
-            <div className="loader-brand-logo">
-              <span className="logo-i">I</span>
-              <span className="logo-n">N</span>
-              <span className="logo-k">K</span>
-              <span className="logo-z">z</span>
-            </div>
+        <div className="simple-loader-card">
+          <div className="simple-brand-logo">
+            <span className="logo-i">I</span>
+            <span className="logo-n">N</span>
+            <span className="logo-k">K</span>
+            <span className="logo-z">z</span>
           </div>
-
-          {/* Sheryians-style 4-corner handles bounding box */}
-          <div className="loader-badge-wrap">
-            <span className="hero-boxed-word">
-              <span className="box-handle tl" />
-              <span className="box-handle tr" />
-              <span className="box-handle bl" />
-              <span className="box-handle br" />
-              CLOUD IDE ACCESS
-            </span>
-          </div>
-
-          <p className="loader-subtext">Verifying application session...</p>
-          
-          <div className="loader-progress-bar">
-            <div className="loader-progress-fill" />
-          </div>
+          <div className="simple-mini-spinner" />
+          <p className="simple-loader-text">Loading...</p>
         </div>
       </div>
     )

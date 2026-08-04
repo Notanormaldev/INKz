@@ -79,7 +79,7 @@ stringData:
 
   return (
     <div className="docs-page-root">
-      <Header />
+      <Header minimal={true} />
 
       <div className="docs-container">
         {/* Top Header */}

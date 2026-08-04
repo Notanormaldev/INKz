@@ -49,7 +49,7 @@ export default function FreePlan() {
 
   return (
     <div className="free-page-root">
-      <Header />
+      <Header minimal={true} />
       <div className="free-bg-grid" />
       <div className="free-bg-glow" />
 

@@ -429,98 +429,54 @@
   min-height: 100vh;
 }
 
-.apply-logo-loader-card {
+/* Simple Clean Loader */
+.simple-loader-card {
   position: relative;
   z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: rgba(14, 14, 20, 0.95);
-  border: 1px solid rgba(249, 115, 22, 0.35);
-  box-shadow: 0 0 50px rgba(249, 115, 22, 0.2), inset 0 0 20px rgba(249, 115, 22, 0.05);
-  padding: 3rem 3.5rem;
-  border-radius: 24px;
+  gap: 0.85rem;
+  background: rgba(14, 14, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2.25rem 3rem;
+  border-radius: 20px;
   text-align: center;
-  min-width: 320px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
 }
 
-.loader-logo-wrap {
-  position: relative;
-  width: 90px;
-  height: 90px;
+.simple-brand-logo {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-.loader-logo-ring {
-  position: absolute;
-  inset: 0;
-  border: 2px solid transparent;
-  border-top-color: #f97316;
-  border-right-color: rgba(249, 115, 22, 0.4);
-  border-radius: 50%;
-  animation: logoRingSpin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.4);
-}
-
-@keyframes logoRingSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loader-brand-logo {
-  display: flex;
-  align-items: center;
+  align-items: baseline;
   font-family: system-ui, -apple-system, sans-serif;
-  font-size: 2.2rem;
+  font-size: 2rem;
   font-weight: 900;
-  letter-spacing: -1px;
-  z-index: 2;
+  letter-spacing: -1.5px;
 }
 
-.loader-brand-logo .logo-i { color: #ffffff; }
-.loader-brand-logo .logo-n { color: #ffffff; }
-.loader-brand-logo .logo-k { color: #f97316; }
-.loader-brand-logo .logo-z {
+.simple-brand-logo .logo-i { color: #ffffff; }
+.simple-brand-logo .logo-n { color: #ffffff; }
+.simple-brand-logo .logo-k { color: #ffffff; }
+.simple-brand-logo .logo-z {
   color: #f97316;
-  font-size: 2.5rem;
-  background: linear-gradient(135deg, #f97316, #fb923c);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-style: italic;
+  font-size: 0.85em;
 }
 
-.loader-badge-wrap {
-  margin-bottom: 1rem;
+.simple-mini-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(249, 115, 22, 0.2);
+  border-top-color: #f97316;
+  border-radius: 50%;
+  animation: inkzSpin 0.7s linear infinite;
 }
 
-.loader-subtext {
-  font-size: 0.9rem;
+.simple-loader-text {
+  font-size: 0.85rem;
   color: #a1a1aa;
-  margin: 0 0 1.5rem;
-}
-
-.loader-progress-bar {
-  width: 100%;
-  max-width: 220px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 999px;
-  overflow: hidden;
-  position: relative;
-}
-
-.loader-progress-fill {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, #f97316, transparent);
-  animation: progressPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes progressPulse {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  margin: 0;
+  font-weight: 500;
 }
 
 /* Auth & Review Box States */
