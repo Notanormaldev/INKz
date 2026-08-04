@@ -22,6 +22,17 @@ export default function HeroSection({ onOpenAuth }) {
 
   return (
     <section className="hero-container">
+      {/* Background Diamond Circuit Lines & Mesh Layer */}
+      <svg className="hero-bg-circuit-svg" viewBox="0 0 1440 900" fill="none" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <path d="M -80 450 L 320 50 L 720 450 L 320 850 Z" stroke="rgba(249, 115, 22, 0.14)" strokeWidth="1.2" />
+        <path d="M -20 450 L 320 110 L 660 450 L 320 790 Z" stroke="rgba(249, 115, 22, 0.08)" strokeWidth="1" />
+        <path d="M 720 450 L 1120 50 L 1520 450 L 1120 850 Z" stroke="rgba(249, 115, 22, 0.14)" strokeWidth="1.2" />
+        <path d="M 780 450 L 1120 110 L 1460 450 L 1120 790 Z" stroke="rgba(249, 115, 22, 0.08)" strokeWidth="1" />
+        <line x1="-100" y1="260" x2="400" y2="260" stroke="rgba(249, 115, 22, 0.09)" strokeWidth="1" />
+        <line x1="1040" y1="260" x2="1540" y2="260" stroke="rgba(249, 115, 22, 0.09)" strokeWidth="1" />
+        <line x1="-100" y1="640" x2="400" y2="640" stroke="rgba(249, 115, 22, 0.09)" strokeWidth="1" />
+        <line x1="1040" y1="640" x2="1540" y2="640" stroke="rgba(249, 115, 22, 0.09)" strokeWidth="1" />
+      </svg>
       {/* Beta Release Pill */}
       <div className="hero-pill-wrapper">
         <div className="hero-pill">
@@ -34,7 +45,13 @@ export default function HeroSection({ onOpenAuth }) {
       <div className="hero-text-block">
         <h1 className="hero-main-heading">
           Unlock your <br />
-          <span className="hero-serif-italic">next-gen</span> cloud IDE
+          <span className="hero-boxed-word">
+            <span className="hero-serif-italic">next-gen</span>
+            <span className="box-handle tl" />
+            <span className="box-handle tr" />
+            <span className="box-handle bl" />
+            <span className="box-handle br" />
+          </span> cloud IDE
         </h1>
 
         {/* Brand Tagline */}

@@ -9,6 +9,44 @@
   justify-content: center;
   padding: 8rem 1.5rem 4rem;
   text-align: center;
+  background-color: #020101;
+  background-image: 
+    radial-gradient(ellipse 85% 55% at 50% 90%, rgba(234, 88, 12, 0.28) 0%, rgba(154, 52, 18, 0.1) 45%, rgba(0, 0, 0, 0) 80%);
+  background-size: 100% 100%;
+  background-position: center;
+  overflow: hidden;
+}
+
+/* Left side dot matrix grid */
+.hero-container::before {
+  content: '';
+  position: absolute;
+  top: 15%;
+  left: 2%;
+  width: 340px;
+  height: 500px;
+  background-image: radial-gradient(rgba(249, 115, 22, 0.26) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at left center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at left center, black 40%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Right side dot matrix grid */
+.hero-container::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  right: 2%;
+  width: 340px;
+  height: 500px;
+  background-image: radial-gradient(rgba(249, 115, 22, 0.26) 1.5px, transparent 1.5px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(ellipse at right center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at right center, black 40%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
 }
 
 /* Beta Release Pill */
@@ -75,6 +113,66 @@
   background: linear-gradient(135deg, #f97316 0%, #fb923c 50%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Bounding Box Selection Style for Hero Headline */
+.hero-boxed-word {
+  position: relative;
+  display: inline-block;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: #ffffff;
+  padding: 1px 12px;
+  margin: 0 4px;
+  border: 1.5px solid rgba(249, 115, 22, 0.85);
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
+  border-radius: 4px;
+  box-shadow: 
+    0 0 14px rgba(249, 115, 22, 0.25),
+    inset 0 0 8px rgba(249, 115, 22, 0.15);
+  vertical-align: baseline;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+.hero-boxed-word:hover {
+  border-color: #f97316;
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.32) 0%, rgba(234, 88, 12, 0.18) 100%);
+  box-shadow: 
+    0 0 22px rgba(249, 115, 22, 0.45),
+    inset 0 0 12px rgba(249, 115, 22, 0.25);
+}
+
+/* 4 Corner Bounding Box Handles */
+.hero-boxed-word .box-handle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: #ea580c;
+  border: 1px solid #ffffff;
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.hero-boxed-word:hover .box-handle {
+  background-color: #f97316;
+}
+
+.hero-boxed-word .box-handle.tl { top: -3px; left: -3px; }
+.hero-boxed-word .box-handle.tr { top: -3px; right: -3px; }
+.hero-boxed-word .box-handle.bl { bottom: -3px; left: -3px; }
+.hero-boxed-word .box-handle.br { bottom: -3px; right: -3px; }
+
+.hero-boxed-word:hover .box-handle.tl,
+.hero-boxed-word:hover .box-handle.tr,
+.hero-boxed-word:hover .box-handle.bl,
+.hero-boxed-word:hover .box-handle.br {
+  transform: scale(1.2);
 }
 
 .hero-brand-tagline {
