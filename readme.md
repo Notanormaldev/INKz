@@ -1,7 +1,7 @@
 <div align="center">
 <img src="frontend/public/logo.png" width="120"/>
 
-# ⚡ INKz
+
 
 ### The browser IS the IDE. The cloud IS the machine.
 
