@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import Header from '../components/archive/Header'
-import Footer from '../components/archive/Footer'
+import Header from '../components/common/Header'
+import Footer from '../components/common/Footer'
 import './SelfHostedDocs.css'
 
 export default function SelfHostedDocs() {

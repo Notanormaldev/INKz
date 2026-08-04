@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import Header from '../components/archive/Header'
-import Footer from '../components/archive/Footer'
+import Header from '../components/common/Header'
+import Footer from '../components/common/Footer'
 import './FreePlan.css'
 
 const REPO_URL = 'https://github.com/Notanormaldev/INKz'
