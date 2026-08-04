@@ -1,0 +1,205 @@
+/* About Section from Archive */
+.archive-about-container {
+  position: relative;
+  z-index: 10;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #ffffff;
+  padding: 4px 16px;
+  margin-bottom: 1.25rem;
+  border: 1.5px solid rgba(249, 115, 22, 0.85);
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.22) 0%, rgba(234, 88, 12, 0.12) 100%);
+  border-radius: 4px;
+  box-shadow: 
+    0 0 14px rgba(249, 115, 22, 0.25),
+    inset 0 0 8px rgba(249, 115, 22, 0.15);
+  transition: all 0.25s ease;
+}
+
+.about-badge:hover {
+  border-color: #f97316;
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.32) 0%, rgba(234, 88, 12, 0.18) 100%);
+  box-shadow: 
+    0 0 22px rgba(249, 115, 22, 0.45),
+    inset 0 0 12px rgba(249, 115, 22, 0.25);
+}
+
+.about-badge .box-handle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: #ea580c;
+  border: 1px solid #ffffff;
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.about-badge:hover .box-handle {
+  background-color: #f97316;
+}
+
+.about-badge .box-handle.tl { top: -3px; left: -3px; }
+.about-badge .box-handle.tr { top: -3px; right: -3px; }
+.about-badge .box-handle.bl { bottom: -3px; left: -3px; }
+.about-badge .box-handle.br { bottom: -3px; right: -3px; }
+
+.about-badge:hover .box-handle.tl,
+.about-badge:hover .box-handle.tr,
+.about-badge:hover .box-handle.bl,
+.about-badge:hover .box-handle.br {
+  transform: scale(1.2);
+}
+
+.about-title {
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0 0 1.25rem;
+}
+
+.about-title-accent {
+  background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.about-subtitle {
+  font-size: 1.08rem;
+  color: #a1a1aa;
+  max-width: 680px;
+  line-height: 1.65;
+  margin: 0;
+}
+
+/* Stats Grid */
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.about-stat-card {
+  background: #08080c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.about-stat-card:hover {
+  border-color: rgba(249, 115, 22, 0.4);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.6);
+}
+
+.stat-value-text {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-family: monospace;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f4f4f5;
+  margin-bottom: 0.25rem;
+}
+
+.stat-sub-text {
+  font-size: 0.78rem;
+  color: #71717a;
+}
+
+/* Architecture Box */
+.about-architecture-box {
+  background: rgba(14, 14, 20, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: 2rem;
+  align-items: flex-start;
+  backdrop-filter: blur(16px);
+}
+
+.arch-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.arch-num {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #f97316;
+  margin-bottom: 0.75rem;
+}
+
+.arch-col-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+}
+
+.arch-col-desc {
+  font-size: 0.92rem;
+  color: #a1a1aa;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.arch-divider {
+  width: 1px;
+  height: 100%;
+  min-height: 140px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 900px) {
+  .about-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-architecture-box {
+    grid-template-columns: 1fr;
+  }
+
+  .arch-divider {
+    width: 100%;
+    height: 1px;
+    min-height: 1px;
+  }
+}

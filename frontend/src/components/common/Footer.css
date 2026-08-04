@@ -1,0 +1,134 @@
+/* Footer from Archive */
+.archive-footer-container {
+  position: relative;
+  z-index: 10;
+  background: #040406;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 1.5rem 2rem;
+}
+
+.footer-section-divider {
+  width: 100%;
+  max-width: 1040px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  margin: 3rem auto 3.5rem;
+}
+
+.archive-footer-content {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+.brand-summary-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* FINAL INKz Logo */
+.brand-summary-col .nav-logo {
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -2.5px;
+}
+
+.brand-summary-col .logo-i {
+  color: #ffffff;
+}
+
+.brand-summary-col .logo-n {
+  color: #ffffff;
+}
+
+.brand-summary-col .logo-k {
+  color: #ffffff;
+}
+
+.brand-summary-col .logo-z {
+  color: #f97316;
+  font-style: italic;
+  font-size: 0.85em;
+  letter-spacing: -1px;
+}
+
+.brand-summary-col .ink-drop-mini {
+  display: none !important;
+}
+
+.brand-desc-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0;
+}
+
+.brand-italic-motto {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #a1a1aa;
+  font-style: italic;
+  margin: 0;
+}
+
+.links-col-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 1.25rem;
+}
+
+.links-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.links-list a,
+.links-list span {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.links-list a:hover,
+.links-list span:hover {
+  color: #ffffff;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.footer-bottom-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}

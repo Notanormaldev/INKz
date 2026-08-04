@@ -1,0 +1,239 @@
+/* Floating Header from Archive Folder */
+.archive-header-fixed {
+  position: fixed;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5rem;
+  pointer-events: none;
+}
+
+.archive-header-card {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2.5rem;
+  padding: 0.65rem 1.75rem;
+  border-radius: 20px;
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+  max-width: 1040px;
+}
+
+.header-scrolled {
+  background: rgba(5, 5, 8, 0.95);
+  border-color: rgba(249, 115, 22, 0.35);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 25px rgba(249, 115, 22, 0.15);
+}
+
+/* FINAL INKz Logo (Preserved Exactly) */
+.archive-header-card .nav-logo {
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  position: relative;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-weight: 900;
+  font-size: 28px;
+  letter-spacing: -2.5px;
+}
+
+.archive-header-card .logo-i {
+  color: #ffffff;
+}
+
+.archive-header-card .logo-n {
+  color: #ffffff;
+}
+
+.archive-header-card .logo-k {
+  color: #ffffff;
+}
+
+.archive-header-card .logo-z {
+  color: #f97316;
+  font-style: italic;
+  font-size: 0.85em;
+  letter-spacing: -1px;
+}
+
+.archive-header-card .ink-drop-mini {
+  display: none !important;
+}
+
+/* Nav Links */
+.archive-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.archive-nav-link {
+  color: #a1a1aa;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.archive-nav-link:hover {
+  color: #ffffff;
+}
+
+/* Actions */
+.archive-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.archive-signin-btn {
+  background: transparent;
+  border: none;
+  color: #a1a1aa;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.archive-signin-btn:hover {
+  color: #ffffff;
+}
+
+.archive-getstarted-btn {
+  background: #ffffff;
+  color: #09090b;
+  border: none;
+  border-radius: 12px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15);
+}
+
+.archive-getstarted-btn:hover {
+  background: #f4f4f5;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);
+}
+
+.archive-back-home-link {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #a1a1aa;
+  padding: 0.45rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archive-back-home-link:hover {
+  background: rgba(249, 115, 22, 0.15);
+  border-color: rgba(249, 115, 22, 0.4);
+  color: #f97316;
+}
+
+.user-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-badge-name {
+  font-size: 0.85rem;
+  color: #f4f4f5;
+}
+
+.archive-dash-btn {
+  background: #f97316;
+  color: #ffffff;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.archive-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 1rem;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.14) 0%, rgba(234, 88, 12, 0.22) 100%);
+  border: 1px solid rgba(249, 115, 22, 0.45);
+  color: #ffedd5;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(249, 115, 22, 0.15);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.archive-admin-btn:hover {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: #ffffff;
+  border-color: #f97316;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(249, 115, 22, 0.45);
+}
+
+.archive-signout-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a1a1aa;
+  padding: 0.4rem 0.75rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.archive-signout-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+@media (max-width: 768px) {
+  .archive-header-fixed {
+    padding: 0 0.5rem;
+  }
+
+  .archive-header-card {
+    padding: 0.45rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .archive-nav-links {
+    display: none;
+  }
+
+  .archive-admin-btn {
+    display: none;
+  }
+
+  .archive-dash-btn,
+  .archive-getstarted-btn {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.85rem;
+    white-space: nowrap;
+  }
+}
