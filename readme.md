@@ -164,14 +164,11 @@ Skip `auth` and `notification` entirely on an 8GB laptop to save roughly 2.5GB o
 
 <div align="center">
 
-## Built with 🔥 by Harsh
+## Built with 🔥 by Harsh Patel
 
 Solo-built, end to end — frontend, five microservices, the Kubernetes control plane, and the AI agent that ties it all together.
 
 If INKz impressed you even a little, a star tells me it's worth pushing further.
-
-[![Star this repo](https://img.shields.io/github/stars/Notanormaldev/INKz?style=for-the-badge&label=Star%20on%20GitHub)](https://github.com/Notanormaldev/INKz)
-[![LinkedIn](https://img.shields.io/badge/Connect-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/harsh-patel-a77148314/)
 
 **MIT License**
 
