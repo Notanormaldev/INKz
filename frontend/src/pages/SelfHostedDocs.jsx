@@ -94,7 +94,7 @@ stringData:
             </span>
           </div>
           <h1 className="docs-title">
-            Run INKz Locally with <span className="docs-highlight">Offline AI</span> & Cloud Sandboxes
+            Run INKz Locally with <span className="docs-highlight">Offline AI</span> & Local Container Sandboxes
           </h1>
           <p className="docs-subtitle">
             Complete technical guide to setup INKz microservices, Docker sandboxes, Kubernetes pods, and Ollama or LangChain AI models on your own machine.
