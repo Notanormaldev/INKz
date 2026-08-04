@@ -48,12 +48,42 @@ router.post('/logout', (req, res) => {
     return res.status(200).json({ message: 'Logged out successfully' })
 })
 
+// ── GET /api/auth/my-application — check application status of logged-in user ─
+router.get('/my-application', async (req, res) => {
+    try {
+        const token = req.cookies?.token
+        if (!token) return res.status(401).json({ message: 'Not authenticated' })
+
+        const decoded = jwt.verify(token, process.env.JWT)
+        const user = await User.findById(decoded.id)
+        if (!user) return res.status(401).json({ message: 'User not found' })
+
+        const existingApp = await Application.findOne({ email: user.email.toLowerCase().trim() })
+        if (existingApp) {
+            return res.json({ hasApplied: true, application: existingApp })
+        }
+        return res.json({ hasApplied: false })
+    } catch (err) {
+        return res.status(500).json({ message: 'Error checking application status' })
+    }
+})
+
 // ── POST /api/auth/apply — submit early access application ───────────────
 router.post('/apply', async (req, res) => {
     try {
         const { name, email, github, experience, usecase } = req.body
         if (!name || !email || !usecase) {
             return res.status(400).json({ message: 'Name, email, and usecase are required' })
+        }
+
+        // Check if application already exists for this email
+        const existingApp = await Application.findOne({ email: email.toLowerCase().trim() })
+        if (existingApp) {
+            return res.status(400).json({
+                message: 'Wait for some time, your application is on reviewing',
+                application: existingApp,
+                alreadyApplied: true
+            })
         }
 
         const application = await Application.create({

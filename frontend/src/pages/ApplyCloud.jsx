@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import GoogleAuthModal from '../components/landing/GoogleAuthModal'
 import './ApplyCloud.css'
 
 const TOTAL_SPOTS = 5
-// In a real app this would come from a backend count
 const SPOTS_TAKEN = 2
 
 export default function ApplyCloud() {
   const navigate = useNavigate()
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+  const [user, setUser] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false)
+  const [hasApplied, setHasApplied] = useState(false)
+  const [existingApp, setExistingApp] = useState(null)
+  const [showAuthModal, setShowAuthModal] = useState(false)
 
   const [form, setForm] = useState({
     name: '',
@@ -20,11 +22,52 @@ export default function ApplyCloud() {
     usecase: '',
     experience: '',
   })
-  const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const spotsLeft = TOTAL_SPOTS - SPOTS_TAKEN
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => {
+      controller.abort()
+      setAuthChecked(true)
+    }, 3500)
+
+    // Check user authentication
+    fetch('/api/auth/me', { credentials: 'include', signal: controller.signal })
+      .then(res => {
+        if (res.ok) return res.json()
+        throw new Error('Not authenticated')
+      })
+      .then(data => {
+        setUser(data)
+        setForm(prev => ({
+          ...prev,
+          name: data.name || '',
+          email: data.email || ''
+        }))
+
+        // Check if this user has already submitted an application
+        return fetch('/api/auth/my-application', { credentials: 'include', signal: controller.signal })
+      })
+      .then(res => res ? res.json() : null)
+      .then(appData => {
+        if (appData?.hasApplied) {
+          setHasApplied(true)
+          setExistingApp(appData.application)
+        }
+        clearTimeout(timeoutId)
+        setAuthChecked(true)
+      })
+      .catch(() => {
+        clearTimeout(timeoutId)
+        setUser(null)
+        setAuthChecked(true)
+      })
+  }, [])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -33,26 +76,92 @@ export default function ApplyCloud() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Sign in mandatory check
+    if (!user) {
+      setShowAuthModal(true)
+      return
+    }
+
     if (!form.name || !form.email || !form.usecase) {
       setError('Please fill in all required fields.')
       return
     }
+
     setLoading(true)
     setError('')
+
     try {
       const res = await fetch('/api/auth/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(form)
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.message || 'Failed to submit application')
+
+      if (data?.alreadyApplied || data?.hasApplied) {
+        setHasApplied(true)
+        setExistingApp(data.application)
+        setLoading(false)
+        return
+      }
+
+      if (!res.ok) {
+        if (res.status === 400 && data.message?.includes('reviewing')) {
+          setHasApplied(true)
+          setExistingApp(data.application)
+          setLoading(false)
+          return
+        }
+        throw new Error(data.message || 'Failed to submit application')
+      }
+
       setLoading(false)
-      setSubmitted(true)
+      setHasApplied(true)
+      setExistingApp(data.application)
     } catch (err) {
       setLoading(false)
       setError(err.message || 'Error submitting application')
     }
+  }
+
+  if (!authChecked) {
+    return (
+      <div className="apply-page-root flex-center-root">
+        <div className="apply-bg-grid" />
+        <div className="apply-bg-glow" />
+        <div className="apply-logo-loader-card">
+          {/* Animated INKz Brand Logo */}
+          <div className="loader-logo-wrap">
+            <div className="loader-logo-ring" />
+            <div className="loader-brand-logo">
+              <span className="logo-i">I</span>
+              <span className="logo-n">N</span>
+              <span className="logo-k">K</span>
+              <span className="logo-z">z</span>
+            </div>
+          </div>
+
+          {/* Sheryians-style 4-corner handles bounding box */}
+          <div className="loader-badge-wrap">
+            <span className="hero-boxed-word">
+              <span className="box-handle tl" />
+              <span className="box-handle tr" />
+              <span className="box-handle bl" />
+              <span className="box-handle br" />
+              CLOUD IDE ACCESS
+            </span>
+          </div>
+
+          <p className="loader-subtext">Verifying application session...</p>
+          
+          <div className="loader-progress-bar">
+            <div className="loader-progress-fill" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -66,7 +175,106 @@ export default function ApplyCloud() {
       </button>
 
       <div className="apply-content">
-        {!submitted ? (
+        {/* STATE 1: NOT LOGGED IN — Prompt Sign In */}
+        {!user ? (
+          <div className="apply-auth-required-box">
+            <div className="apply-badge-container">
+              <span className="hero-boxed-word">
+                <span className="box-handle tl" />
+                <span className="box-handle tr" />
+                <span className="box-handle bl" />
+                <span className="box-handle br" />
+                SIGN IN REQUIRED
+              </span>
+            </div>
+
+            <h1 className="apply-title">
+              Sign In to Apply for <span className="apply-title-accent">Cloud IDE</span>
+            </h1>
+
+            <p className="apply-subtitle">
+              You must be signed in with your Google account before submitting an application for INKz Cloud IDE Early Access.
+            </p>
+
+            <button
+              className="apply-auth-btn"
+              onClick={() => setShowAuthModal(true)}
+            >
+              <svg className="google-icon" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.15C3.26 21.3 7.37 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.24c-.25-.72-.38-1.49-.38-2.24s.13-1.52.38-2.24V6.61H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.39l3.99-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.37 0 3.26 2.7 1.29 6.61l3.99 3.15c.95-2.85 3.6-4.96 6.72-4.96z"/>
+              </svg>
+              Sign In with Google to Apply →
+            </button>
+          </div>
+        ) : hasApplied ? (
+          /* STATE 2: ALREADY APPLIED — Application Under Review */
+          <div className="apply-under-review-box">
+            <div className="apply-badge-container">
+              <span className="hero-boxed-word">
+                <span className="box-handle tl" />
+                <span className="box-handle tr" />
+                <span className="box-handle bl" />
+                <span className="box-handle br" />
+                APPLICATION UNDER REVIEW
+              </span>
+            </div>
+
+            <div className="review-clock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+
+            <h1 className="apply-title text-orange">
+              Wait for some time, your application is on reviewing
+            </h1>
+
+            <p className="apply-subtitle">
+              We have received your application for <strong>INKz Cloud IDE Early Access</strong> under <strong>{user.email}</strong>. Our team is manually reviewing all applications.
+            </p>
+
+            <div className="review-status-card">
+              <div className="status-row">
+                <span className="status-label">Applicant Name:</span>
+                <span className="status-value">{existingApp?.name || user.name}</span>
+              </div>
+              <div className="status-row">
+                <span className="status-label">Email:</span>
+                <span className="status-value">{existingApp?.email || user.email}</span>
+              </div>
+              <div className="status-row">
+                <span className="status-label">Status:</span>
+                <span className="status-pill-pending">
+                  <span className="pulse-dot" />
+                  Under Review
+                </span>
+              </div>
+            </div>
+
+            <p className="review-subnote">
+              Selected developers will be notified via email with early access cloud pod credentials.
+            </p>
+
+            <div className="review-actions">
+              <button className="apply-back-home-btn" onClick={() => navigate('/')}>
+                ← Back to Home
+              </button>
+              <a
+                href="https://github.com/Notanormaldev/INKz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="apply-github-btn"
+              >
+                Star on GitHub
+              </a>
+            </div>
+          </div>
+        ) : (
+          /* STATE 3: LOGGED IN & NOT APPLIED — Show Form */
           <>
             {/* Header */}
             <div className="apply-header">
@@ -139,6 +347,7 @@ export default function ApplyCloud() {
                     onChange={handleChange}
                     required
                     autoComplete="email"
+                    readOnly={Boolean(user?.email)}
                   />
                 </div>
               </div>
@@ -218,37 +427,13 @@ export default function ApplyCloud() {
               </p>
             </form>
           </>
-        ) : (
-          /* Success State */
-          <div className="apply-success">
-            <div className="apply-success-icon">🎉</div>
-            <h2 className="apply-success-title">Application Received!</h2>
-            <p className="apply-success-sub">
-              Thanks <strong>{form.name}</strong>! Your application for INKz Cloud Early
-              Access is in. We'll review it and reach out to{' '}
-              <strong>{form.email}</strong> within 48 hours if you're selected.
-            </p>
-            <div className="apply-success-note">
-              <span>🏆</span>
-              <span>Only {TOTAL_SPOTS} developers will be chosen. We'll pick those
-              with the most interesting projects and strongest need for cloud infra.</span>
-            </div>
-            <div className="apply-success-actions">
-              <button className="apply-back-home-btn" onClick={() => navigate('/')}>
-                ← Back to Home
-              </button>
-              <a
-                href="https://github.com/Notanormaldev/INKz"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="apply-github-btn"
-              >
-                Star us on GitHub ⭐
-              </a>
-            </div>
-          </div>
         )}
       </div>
+
+      <GoogleAuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </div>
   )
 }
