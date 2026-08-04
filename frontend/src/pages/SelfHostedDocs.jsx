@@ -125,6 +125,67 @@ stringData:
           </div>
         </div>
 
+        {/* Deep Technical Guides & Reference Section */}
+        <section className="docs-card-section deep-guides-section">
+          <div className="section-title-row">
+            <svg className="section-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <h2 className="section-heading">Deep Technical Guides & Reference Docs</h2>
+          </div>
+          <p className="section-desc">
+            For a deeper and complete technical understanding of system architecture, self-hosting configurations, and codebase maps, refer to these guides:
+          </p>
+
+          <div className="deep-links-grid">
+            <a 
+              href="https://github.com/Notanormaldev/INKz/blob/main/ARCHITECTURE.md" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="deep-link-card"
+            >
+              <div className="deep-link-header">
+                <span className="deep-tag arch-tag">ARCHITECTURE</span>
+                <span className="external-arrow">↗</span>
+              </div>
+              <h3>System Architecture & Technical Reference</h3>
+              <p>Complete breakdown of 5 core microservices, Redis TTL pod lifecycle, RabbitMQ event bus, LangChain AI loop, and K8s RBAC security models.</p>
+              <span className="deep-link-url">github.com/Notanormaldev/INKz/blob/main/ARCHITECTURE.md</span>
+            </a>
+
+            <a 
+              href="https://github.com/Notanormaldev/INKz/blob/main/SELF_HOST.md" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="deep-link-card"
+            >
+              <div className="deep-link-header">
+                <span className="deep-tag host-tag">SELF-HOST</span>
+                <span className="external-arrow">↗</span>
+              </div>
+              <h3>Complete Self-Hosting Guide</h3>
+              <p>Step-by-step instructions for running on Docker/K8s, MinIO S3 replacement, offline Ollama models, secrets configuration, and low-RAM optimization.</p>
+              <span className="deep-link-url">github.com/Notanormaldev/INKz/blob/main/SELF_HOST.md</span>
+            </a>
+
+            <a 
+              href="https://deepwiki.com/Notanormaldev/INKz" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="deep-link-card"
+            >
+              <div className="deep-link-header">
+                <span className="deep-tag wiki-tag">DEEPWIKI</span>
+                <span className="external-arrow">↗</span>
+              </div>
+              <h3>Interactive DeepWiki Codebase Map</h3>
+              <p>Explore an AI-generated, browsable map of the full INKz codebase structure, dependency relationships, and implementation details online.</p>
+              <span className="deep-link-url">deepwiki.com/Notanormaldev/INKz</span>
+            </a>
+          </div>
+        </section>
+
         {/* 1. Hardware & Software Requirements */}
         <section className="docs-card-section">
           <div className="section-title-row">

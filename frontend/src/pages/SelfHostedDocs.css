@@ -466,3 +466,103 @@
 .back-home-btn:hover {
   color: #ffffff;
 }
+
+/* Deep Technical Guides Grid */
+.deep-guides-section {
+  background: rgba(249, 115, 22, 0.03);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.05);
+}
+
+.deep-links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.deep-link-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.deep-link-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(249, 115, 22, 0.6);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.15);
+  background: rgba(249, 115, 22, 0.06);
+}
+
+.deep-link-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.deep-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.arch-tag {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.host-tag {
+  background: rgba(46, 164, 79, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(46, 164, 79, 0.3);
+}
+
+.wiki-tag {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.external-arrow {
+  color: #a1a1aa;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.deep-link-card:hover .external-arrow {
+  color: #f97316;
+  transform: translate(2px, -2px);
+}
+
+.deep-link-card h3 {
+  font-size: 1.15rem;
+  color: #ffffff;
+  margin: 0 0 0.6rem;
+  font-weight: 700;
+}
+
+.deep-link-card p {
+  font-size: 0.88rem;
+  color: #a1a1aa;
+  line-height: 1.5;
+  margin: 0 0 1.25rem;
+  flex-grow: 1;
+}
+
+.deep-link-url {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #f97316;
+  word-break: break-all;
+}
+
