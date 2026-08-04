@@ -1,7 +1,7 @@
 <div align="center">
 <img src="frontend/public/logo.png" width="120"/>
 
-# ⚡ INKz
+
 
 ### The browser IS the IDE. The cloud IS the machine.
 
@@ -41,14 +41,6 @@ This isn't a toy demo wrapped around a single API call. It's a full event-driven
 <td width="50%"><img src="frontend/public/ide2.png" width="100%"/><br/><sub><b>Live dev server preview + HMR</b></sub></td>
 <td width="50%"><img src="frontend/public/ide3.png" width="100%"/><br/><sub><b>Autonomous AI pair programmer</b></sub></td>
 </tr>
-</table>
-
-<div align="center">
-<img src="frontend/public/mbview.png" width="220"/>
-<img src="frontend/public/mbview2.png" width="220"/>
-<br/><sub><b>Mobile view</b> — the landing page and dashboard are fully responsive (the editor and AI agent are desktop-only)</sub>
-</div>
-
 ---
 
 ## The numbers
@@ -177,9 +169,6 @@ Skip `auth` and `notification` entirely on an 8GB laptop to save roughly 2.5GB o
 Solo-built, end to end — frontend, five microservices, the Kubernetes control plane, and the AI agent that ties it all together.
 
 If INKz impressed you even a little, a star tells me it's worth pushing further.
-
-[![Star this repo](https://img.shields.io/github/stars/Notanormaldev/INKz?style=for-the-badge&label=Star%20on%20GitHub)](https://github.com/Notanormaldev/INKz)
-[![LinkedIn](https://img.shields.io/badge/Connect-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/harsh-patel-a77148314/)
 
 **MIT License**
 
