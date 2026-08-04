@@ -172,7 +172,7 @@ Skip `auth` and `notification` entirely on an 8GB laptop to save roughly 2.5GB o
 
 <div align="center">
 
-## Built with 🔥 by Harsh
+## Built with 🔥 by Harsh Patel
 
 Solo-built, end to end — frontend, five microservices, the Kubernetes control plane, and the AI agent that ties it all together.
 
