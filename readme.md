@@ -14,7 +14,6 @@
 [![RabbitMQ](https://img.shields.io/badge/RabbitMQ-AMQP-FF6600.svg?logo=rabbitmq&logoColor=white)](https://www.rabbitmq.com/)
 [![Redis](https://img.shields.io/badge/Redis-TTL_Engine-DC382D.svg?logo=redis&logoColor=white)](https://redis.io/)
 [![LangChain](https://img.shields.io/badge/AI_Agent-LangChain_(Pluggable_LLM)-1C3C3C.svg)](https://www.langchain.com/)
-[![Stars](https://img.shields.io/github/stars/Notanormaldev/INKz?style=social)](https://github.com/Notanormaldev/INKz)
 
 Built solo, top to bottom, by **[Harsh Patel](https://github.com/Notanormaldev)**
 
@@ -164,12 +163,18 @@ Skip `auth` and `notification` entirely on an 8GB laptop to save roughly 2.5GB o
 
 <div align="center">
 
-## Built with 🔥 by Harsh Patel
+### Built with 🔥 by **[Harsh Patel](https://github.com/Notanormaldev)**
 
-Solo-built, end to end — frontend, five microservices, the Kubernetes control plane, and the AI agent that ties it all together.
+*Solo-engineered end to end — 5 microservices, Kubernetes control plane, and an autonomous AI agent.*
 
-If INKz impressed you even a little, a star tells me it's worth pushing further.
+<br/>
 
-**MIT License**
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Notanormaldev%2FINKz-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Notanormaldev/INKz)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Harsh%20Patel-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/harsh-patel-a77148314/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-f39c12?style=for-the-badge)](LICENSE)
+
+<br/>
+
+<sub>Released under the <b>MIT License</b>. Free & Open Source for everyone.</sub>
 
 </div>
