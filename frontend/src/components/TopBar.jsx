@@ -27,8 +27,10 @@ export default function TopBar({
       {/* Left: logo + project selector */}
       <div className="topbar-left">
         <button className="topbar-logo" onClick={onGoHome} title="Go to home">
-          <span className="topbar-ink">INK</span>
-          <span className="topbar-z">z</span>
+          <span className="logo-i">I</span>
+          <span className="logo-n">N</span>
+          <span className="logo-k">K</span>
+          <span className="logo-z">z</span>
         </button>
 
         <div className="topbar-divider" />

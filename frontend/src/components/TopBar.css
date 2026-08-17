@@ -25,10 +25,10 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 20px;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-size: 22px;
   font-weight: 900;
-  letter-spacing: -1.5px;
+  letter-spacing: -2px;
   padding: 0;
   gap: 0;
   transition: opacity 0.15s;
@@ -38,14 +38,17 @@
   opacity: 0.8;
 }
 
-.topbar-ink {
+.topbar-logo .logo-i,
+.topbar-logo .logo-n,
+.topbar-logo .logo-k {
   color: var(--text-primary);
 }
 
-.topbar-z {
+.topbar-logo .logo-z {
   font-style: italic;
-  font-size: 22px;
-  color: var(--accent);
+  font-size: 0.85em;
+  color: #f97316;
+  letter-spacing: -1px;
 }
 
 .topbar-divider {

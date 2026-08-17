@@ -43,11 +43,10 @@ export default function DashHeader({ onNewProject }) {
           onClick={() => navigate('/')}
           title="Go to Home"
         >
-          <span>I</span>
-          <span>N</span>
-          <span>K</span>
+          <span className="logo-i">I</span>
+          <span className="logo-n">N</span>
+          <span className="logo-k">K</span>
           <span className="logo-z">z</span>
-          <div className="logo-drop" aria-hidden="true" />
         </div>
 
         <div className="dash-header-actions">

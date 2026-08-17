@@ -15,36 +15,32 @@
   position: relative;
   display: flex;
   align-items: baseline;
-  font-family: var(--font-sans);
-  font-size: 32px;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  font-size: 28px;
   font-weight: 900;
-  letter-spacing: -3px;
+  letter-spacing: -2.5px;
   line-height: 1;
-  color: #fff;
+  color: #ffffff;
   user-select: none;
   cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.dash-logo:hover {
+  opacity: 0.85;
+}
+
+.dash-logo .logo-i,
+.dash-logo .logo-n,
+.dash-logo .logo-k {
+  color: #ffffff;
 }
 
 .dash-logo .logo-z {
+  color: #f97316;
   font-style: italic;
-  font-size: 36px;
-  letter-spacing: -2px;
-}
-
-.logo-drop {
-  position: absolute;
-  top: -4px;
-  left: 2px;
-  width: 6px;
-  height: 9px;
-  background: var(--accent);
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  animation: drip 3s ease-in-out infinite;
-}
-
-@keyframes drip {
-  0%, 100% { transform: scaleY(1); }
-  50%       { transform: scaleY(1.2); }
+  font-size: 0.85em;
+  letter-spacing: -1px;
 }
 
 /* ── Header Actions Group ── */
