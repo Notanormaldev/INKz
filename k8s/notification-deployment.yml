@@ -15,7 +15,7 @@ spec:
         app:  notification
     spec:
       containers:
-      - image: notification
+      - image: 980195619982.dkr.ecr.ap-south-1.amazonaws.com/notification
         imagePullPolicy: Always
         name:  notification
         resources:

@@ -52,7 +52,7 @@ spec:
                 port:
                   number: 80
                   
-    - host: "*.preview.localhost"
+    - host: "*.preview.clickking.me"
       http:
         paths:
           - pathType: Prefix
@@ -63,9 +63,7 @@ spec:
                 port:
                   number: 80
 
-
-
-    - host: "*.agent.localhost"
+    - host: "*.agent.clickking.me"
       http:
         paths:
           - pathType: Prefix

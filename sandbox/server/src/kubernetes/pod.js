@@ -19,7 +19,7 @@ export async function createpod(sandboxid,projectid){
          initContainers:[
             {
                 name:"init-container",
-                image:"template",
+                image:"980195619982.dkr.ecr.ap-south-1.amazonaws.com/template",
                 imagePullPolicy:"Always",
                 command:['sh','-c','cp -r /workspace/. /seed/'],
                 volumeMounts:[{
@@ -29,7 +29,7 @@ export async function createpod(sandboxid,projectid){
             }
          ],
             containers:[{
-                image:"template",
+                image:"980195619982.dkr.ecr.ap-south-1.amazonaws.com/template",
                 imagePullPolicy:"Always",
                 name:"sandbox-container",
                 ports:[{containerPort:5173,name:"http"}],
@@ -48,7 +48,7 @@ export async function createpod(sandboxid,projectid){
                     mountPath:"/workspace"
                 }]
             },{
-                image:"agent",
+                image:"980195619982.dkr.ecr.ap-south-1.amazonaws.com/agent",
                 imagePullPolicy:"Always",
                 name:"agent-container",
                 ports:[{containerPort:3000,name:"http"}],
@@ -69,7 +69,7 @@ export async function createpod(sandboxid,projectid){
             },
         {
            name:"sync-agent",
-           image:"sync-agent",
+           image:"980195619982.dkr.ecr.ap-south-1.amazonaws.com/sync-agent",
            imagePullPolicy:"Always",
            resources:{
              requests:{

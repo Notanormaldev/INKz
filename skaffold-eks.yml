@@ -14,14 +14,11 @@ build:
       docker:
         dockerfile: dockerfile
 
-
-
     - image: 980195619982.dkr.ecr.ap-south-1.amazonaws.com/auth
       context: auth
       docker:
         dockerfile: dockerfile
   
-
     - image: 980195619982.dkr.ecr.ap-south-1.amazonaws.com/agent
       context: sandbox/agent
       docker:
@@ -42,13 +39,10 @@ build:
       docker:
         dockerfile: dockerfile
 
-
-
     - image: 980195619982.dkr.ecr.ap-south-1.amazonaws.com/notification
       context: notification
       docker:
         dockerfile: dockerfile
-
 
     - image: 980195619982.dkr.ecr.ap-south-1.amazonaws.com/sync-agent
       context: sandbox/sync-agent

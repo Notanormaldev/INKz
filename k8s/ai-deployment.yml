@@ -16,7 +16,7 @@ spec:
         app: ai-deployment
     spec:
       containers:
-        - image: ai-orchestration
+        - image: 980195619982.dkr.ecr.ap-south-1.amazonaws.com/ai-orchestration
           imagePullPolicy: Always
           name: ai-orchestration
           resources:
