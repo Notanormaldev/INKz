@@ -78,4 +78,8 @@ spec:
                 name: aws
                 key: AWS_REGION
 
+          - name: PREVIEW_DOMAIN
+            value: "preview.clickking.me"
+
+
       

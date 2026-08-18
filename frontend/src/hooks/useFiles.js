@@ -9,7 +9,13 @@ export function useFiles(sandboxId) {
   const [activeFile, setActiveFile] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const agentBase = `/agent-api/${sandboxId}`
+  const isLocal = typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+
+  const agentBase = isLocal
+    ? `/agent-api/${sandboxId}`
+    : `${window.location.protocol}//${sandboxId}.agent.clickking.me`
+
 
   const fetchFiles = useCallback(async () => {
     try {

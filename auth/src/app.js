@@ -15,7 +15,7 @@ app.set('trust proxy', true)
 
 // Security headers
 app.use(helmet({
-  contentSecurityPolicy: false
+    contentSecurityPolicy: false
 }))
 
 app.use(express.json())

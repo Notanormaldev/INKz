@@ -79,12 +79,17 @@ export default function Terminal({ sandboxId, podReady }) {
 
     // ── Connect socket with auto-reconnect on disconnect ──────────────────
     function connect() {
-      const socket = io({
+      const isLocal = typeof window !== 'undefined' &&
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      const targetUrl = isLocal ? undefined : `${window.location.protocol}//${sandboxId}.agent.clickking.me`
+
+      const socket = io(targetUrl, {
         query: { sandboxId },
         transports: ['websocket'],
         reconnection: false  // we handle reconnection manually for user feedback
       })
       socketRef.current = socket
+
 
       socket.on('connect', () => {
         reconnectAttemptsRef.current = 0
