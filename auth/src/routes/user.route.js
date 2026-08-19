@@ -219,11 +219,11 @@ router.get('/google/callback', passport.authenticate('google', { scope: ['profil
             maxAge: 7 * 24 * 60 * 60 * 1000
         })
 
-        res.redirect("https://www.clickking.me/projects");
+        res.redirect("http://localhost:5173/projects")
 
     } catch (error) {
         console.log(error);
-        res.redirect("https://www.clickking.me/");
+        res.redirect("http://localhost:5173")
     }
 })
 

@@ -137,8 +137,6 @@ router.post('/start', authMiddleware, async (req, res) => {
         })
     }
 
-    const previewDomain = process.env.PREVIEW_DOMAIN || 'preview.clickking.me'
-
     // ── Resume: pod already running for this project ──
     const existingSandboxid = await getactivesandbox(projectid)
     if (existingSandboxid) {
@@ -146,7 +144,7 @@ router.post('/start', authMiddleware, async (req, res) => {
         return res.status(200).json({
             message: 'Sandbox already running',
             sandboxid: existingSandboxid,
-            preview: `http://${existingSandboxid}.${previewDomain}`
+            preview: `http://${existingSandboxid}.preview.localhost`
         })
     }
 
@@ -163,7 +161,7 @@ router.post('/start', authMiddleware, async (req, res) => {
     return res.status(201).json({
         message: 'Sandbox created successfully',
         sandboxid: sandboxid,
-        preview: `http://${sandboxid}.${previewDomain}`
+        preview: `http://${sandboxid}.preview.localhost`
     })
 
 })
@@ -203,11 +201,10 @@ router.get('/status/:projectid', authMiddleware, async (req, res) => {
         const allReady = pod.status?.containerStatuses?.every(c => c.ready) ?? false
 
         if (phase === 'Running' && allReady) {
-            const previewDomain = process.env.PREVIEW_DOMAIN || 'preview.clickking.me'
             return res.status(200).json({
                 status: 'ready',
                 sandboxid,
-                preview: `http://${sandboxid}.${previewDomain}`
+                preview: `http://${sandboxid}.preview.localhost`
             })
         }
 

@@ -14,6 +14,7 @@ build:
         infer:
           - "src/**"
 
+
     - image: auth
       context: auth
       docker:
@@ -45,6 +46,7 @@ build:
         infer:
           - "src/**"
 
+
     - image: notification
       context: notification
       docker:
@@ -60,6 +62,7 @@ build:
       sync:
         infer:
           - "**"
+
 
 manifests:
   rawYaml:
