@@ -38,11 +38,9 @@ Built solo, top to bottom, by **[Harsh Patel](https://github.com/Notanormaldev)*
 > **AWS Hosting Status:** INKz was fully deployed and benchmarked on **AWS EKS with Auto-scaling** (Cluster Autoscaler & Horizontal Pod Autoscaler). Due to high recurring AWS cloud infrastructure costs (EKS control plane, node groups, load balancers), the active cloud deployment is currently turned off. You can watch the full live deployment & auto-scaling proof video below, or self-host it locally for free using Docker Desktop / K3s!
 
 <div align="center">
-  <a href="https://youtu.be/kIIYYUBweKQ">
-    <img src="https://img.youtube.com/vi/kIIYYUBweKQ/hqdefault.jpg" alt="AWS EKS Live Deployment & Auto-scaling Proof" width="85%" />
-  </a>
+
   <br/>
-  <sub>▶ <b><a href="https://youtu.be/kIIYYUBweKQ">Click here to watch the AWS EKS Live Deployment & Auto-scaling Demonstration</a></b></sub>
+  <sub><b><a href="https://youtu.be/kIIYYUBweKQ">Click here to watch the AWS EKS Live Deployment & Auto-scaling Demonstration</a></b></sub>
 </div>
 
 ---
