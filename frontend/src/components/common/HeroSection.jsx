@@ -163,7 +163,7 @@ export default function HeroSection({ onOpenAuth }) {
             <button className="demo-modal-close" onClick={() => setShowDemoModal(false)}>✕</button>
             <div className="demo-video-wrapper">
               <iframe
-                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1"
+                src="https://www.youtube-nocookie.com/embed/T9tHDczfkYI?autoplay=1"
                 title="INKz Cloud IDE Demo"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
